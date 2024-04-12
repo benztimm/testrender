@@ -23,18 +23,14 @@ app.use(express.urlencoded({ extended: true }));
 app.set('views', path.join(__dirname, 'views')).set('view engine', 'ejs');
 
 
-
-
-app.get('/login', (req, res) => {
+app.get('/login', (req:Request, res:Response) => {
   res.render('login');
 });
-app.post('/login', (req, res) => { 
+app.post('/login', (req:Request, res:Response) => { 
   loginRequest(req, res);
 });
 
-
-
-app.get('/', (req, res) => {
+app.get('/', (req:Request, res:Response) => {
   res.render('index', { text: 'World' });
 });
 

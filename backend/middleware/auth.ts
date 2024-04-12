@@ -39,14 +39,11 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
     }
 }
 const requiredLoginAllSites = (req: Request, res: Response, next: NextFunction) => {
-	(req.path != '/login') 
-				? isAuthenticated(req, res, next) 
-				: next();
+	(req.path != '/login') ? isAuthenticated(req, res, next) : next();
 }
 
 const loginRequest = (req: Request, res: Response) => {
 	const sessionID = req.session.id;
-
 
     const {username, password} = req.body
 	if (!username || !password) {
@@ -61,4 +58,4 @@ const loginRequest = (req: Request, res: Response) => {
 }
 
 
-export {sessionData, requiredLoginAllSites, loginRequest }
+export { sessionData, requiredLoginAllSites, loginRequest }
