@@ -6,19 +6,24 @@ import { Server } from 'socket.io';
 import { createServer } from 'node:http';
 import { sessionData, requiredLoginAllSites, loginRequest } from './middleware/auth';
 import { logger } from './middleware/logger'
+import { createTable, insertUser, getUsers } from './db/index';
+
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
 
-app.use(logger, sessionData, requiredLoginAllSites) ;
+app.use(logger)
+app.use(sessionData)
+// app.use(requiredLoginAllSites) ;
 app.use(express.urlencoded({ extended: true }));
 
 
-// io.on('connection', (socket) => {
-//   console.log('Hello');
-// });
+
+io.on('connection', (socket) => {
+  console.log('Hello');
+});
 
 app.set('views', path.join(__dirname, 'views')).set('view engine', 'ejs');
 
@@ -30,7 +35,11 @@ app.post('/login', (req:Request, res:Response) => {
   loginRequest(req, res);
 });
 
-app.get('/', (req:Request, res:Response) => {
+app.get('/', async (req:Request, res:Response) => {
+  const user = {username: 'user1', email:'test1@bingo.edu', password: 'password1'}
+  // await insertUser("user1", 'test1@bingo.edu', 'password1')
+  // createTable()
+  // getUsers()
   res.render('index', { text: 'World' });
 });
 
