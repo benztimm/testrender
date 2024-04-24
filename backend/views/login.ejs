@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Bingo Game Login</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/forms.css"/>
 </head>
-
 <body>
-    <div class="container">
-        <h2>Login</h2>
-        <% if (locals.errorMessage) { %>
-            <p style="color: red;"><%= errorMessage %></p>
-        <% } %>
-        <form action="/login" method="POST">
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <div class="form-group">
-                <button type="submit">Login</button>
-            </div>
-        </form>
-    </div>
-</body>
+    <%- include('partials/navigation') %>
 
+    <section>
+        <main class="container">
+
+            <div class="form-container">
+                <h2> Login to Your Account </h2>
+                <div style="color: red;"><%= locals.errorMessage %></div>
+                <form class="input-form" action="/login" method="POST">
+                    <input type="text" name="username" placeholder="Username" required>
+                    <input type="password" name="password" placeholder="Password" required>
+                    <input type="submit" value="Login">
+                    <a class="atag" href="/register"> 
+                        Don't have an account? Register Here!
+                    </a>
+                </form>
+            </div>
+            
+        </main>
+        
+    </section>
+    <%- include('partials/footer') %>    
+</body>
 </html>
