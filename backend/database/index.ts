@@ -1,6 +1,11 @@
-
 import { Pool, PoolConfig, QueryResult } from 'pg';
+require('dotenv').config({path: './config.env'})
 
+const result = require('dotenv').config({ path: './backend/database/config.env' });
+
+if (result.error) {
+  console.error(result.error);
+}
 
 const dbConfig: PoolConfig = {
   user: process.env.POSTGRE_ID,
@@ -23,7 +28,7 @@ async function query(text: string, params: any[]): Promise<QueryResult<any>> {
 
 async function insertUser(username: string, password: string, email: string): Promise<void> {
   try {
-    const queryText = 'INSERT INTO users (username, password, email) VALUES ($1, $2, $3)';
+    const queryText = 'INSERT INTO bingo_schema."Users" (username, password, email) VALUES ($1, $2, $3)';
     const queryParams = [username, password, email];
     await query(queryText, queryParams);
     console.log('User inserted successfully');
@@ -64,7 +69,7 @@ async function createTable(): Promise<void> {
 
 async function getUsers() {
   try {
-    const result = await query('SELECT * FROM users', []);
+    const result = await query('SELECT * FROM bingo_schema."Users"', []);
     console.log(result.rows);
   } catch (error) {
     console.error('Error executing query', error);

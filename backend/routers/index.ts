@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { loginRequest } from '../middleware/auth';
-// import { createTable, insertUser, getUsers } from './database/index';
-
+import { createTable, insertUser, getUsers } from '../database/index';
+const bcrypt = require("bcrypt");
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -17,13 +17,16 @@ router.get('/register', (req, res) => {
 });
 
 
-router.post('/register', (req, res) => {
-  const { name, email, password } = req.body;
+router.post('/register', async (req, res) => {
+  const { username, email, password } = req.body;
+  //Add a check function to check if username or email has
+  //already been used.
   //PROCESS DATA:
-  // - Encrypt password
+  const salt = await bcrypt.genSalt();
+  const hash = await bcrypt.hash(password, salt);
   
   // - Store all of them to DB
-  // await insertUser("user1", 'test1@bingo.edu', 'password1')
+  await insertUser(username, email, hash);
   res.render('login');
 });
 
