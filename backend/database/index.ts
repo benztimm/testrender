@@ -1,7 +1,6 @@
 import { Pool, PoolConfig, QueryResult } from 'pg';
-require('dotenv').config({path: './config.env'})
 
-const result = require('dotenv').config({ path: './backend/database/config.env' });
+const result = require('dotenv').config();
 
 if (result.error) {
   console.error(result.error);
@@ -76,4 +75,13 @@ async function getUsers() {
   }
 }
 
-export {insertUser, getUsers, createTable }
+async function getUserData(userVerify:string) {
+  try {
+    const user = await query(`SELECT * FROM bingo_schema."Users" WHERE username = $1`, [userVerify]);
+    return (user.rows[0])
+  } catch (error) {
+    console.error('Error executing query', error);
+  }
+}
+
+export {insertUser, getUsers, createTable, getUserData }

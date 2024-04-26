@@ -14,10 +14,12 @@ const io = new Server(server);
 
 app.use(logger)
 app.use(sessionData)
-// app.use(requiredLoginAllSites);
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../frontend')));
 app.set('views', path.join(__dirname, 'views')).set('view engine', 'ejs');
+app.use(requiredLoginAllSites);
+
 
 io.on('connection', (socket) => {
   socket.broadcast.emit('hi');

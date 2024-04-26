@@ -1,5 +1,7 @@
 import {NextFunction, Request, Response} from 'express'
 import session from 'express-session'
+import { getUserData, getUsers } from '../database';
+const bcrypt = require("bcrypt");
 
 declare module 'express-session' {
 	interface SessionData {
@@ -7,11 +9,6 @@ declare module 'express-session' {
 		}
 	}
 }
-
-const users = [
-	{username: 'user1', email:'test1@bingo.edu', password: 'password1'},
-	{username: 'user2', email:'test2@bingo.edu', password: 'password2'},
-]
 
 const sessionData = session({
 	secret: process.env.SECRET_KEY_BINGO || 'your-secret-key',
@@ -24,14 +21,18 @@ const sessionData = session({
 	},
 })
 
-const authenticate = (username: string, password: string): boolean => {
-	const user = users.find((user) => user.username === username && user.password === password)
-	return !!user
+
+const authenticate = async (username: string, password: string): Promise<boolean> => {
+	try {
+	  const dbUser = await getUserData(username);
+	  return await bcrypt.compare(password, dbUser.password);
+	} catch (err) {
+	  console.error(err);
+	  return false;
+	}
 }
 
 const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.session.user);
-	console.log(req.session);
 	if (req.session.user) {
         next();
     } else {
@@ -40,17 +41,18 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
 }
 
 const requiredLoginAllSites = (req: Request, res: Response, next: NextFunction) => {
-	(req.path != '/login') ? isAuthenticated(req, res, next) : next();
+	!['/login', '/register', '/' ].includes(req.path) ? isAuthenticated(req, res, next) : next();
 }
 
-const loginRequest = (req: Request, res: Response) => {
+const loginRequest = async (req: Request, res: Response) => {
 	const sessionID = req.session.id;
 
     const {username, password} = req.body
 	if (!username || !password) {
 		return res.render('login', {errorMessage: 'Please log in to access the game!'})
 	}
-	if (authenticate(username, password)) {
+	
+	if (await authenticate(username, password)) {
 		req.session.user = { sessionID , username }
 		return res.redirect('/')
 	} else {

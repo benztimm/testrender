@@ -26,7 +26,7 @@ router.post('/register', async (req, res) => {
   const hash = await bcrypt.hash(password, salt);
   
   // - Store all of them to DB
-  await insertUser(username, email, hash);
+  await insertUser(username, hash, email);
   res.render('login');
 });
 
