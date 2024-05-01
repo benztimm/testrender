@@ -27,5 +27,12 @@
         </a></li>
         <li><a href="/lobby" class="nav-link">Lobby</a></li>
         <li><a href="/profile" class="nav-link">Profile</a></li>
+        <% if (session && session.user) { %>
+            <li>
+                <form action="/logout" method="POST" style="display:inline;">
+                    <button type="submit" class="nav-link">Logout</button>
+                </form>
+            </li>
+        <% } %>
     </ul>
 </nav>

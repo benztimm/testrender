@@ -46,11 +46,26 @@ nav > ul > li:nth-child(1) > a > svg {
 
 nav ul li a {
     color: white;
+    
     text-decoration: none;
     padding: 8px 16px;
 }
 
 nav ul li a:hover {
+    background-color: #575757;
+    border-radius: 4px;
+}
+
+nav ul li button {
+    background-color: black;
+    box-shadow: none;
+    border: none; 
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+}
+
+nav ul li button:hover {
     background-color: #575757;
     border-radius: 4px;
 }

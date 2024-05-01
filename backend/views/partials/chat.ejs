@@ -8,11 +8,12 @@
 	const form = document.getElementById('chatForm')
 	const input = document.getElementById('input')
 	const messages = document.getElementById('messages')
+	const user = "<%= session.user ? session.user['username'] : 'Guest' %>";
 
 	form.addEventListener('submit', (e) => {
 		e.preventDefault()
 		if (input.value) {
-			socket.emit('chat message', input.value)
+			socket.emit('chat message', { user: user, message: input.value })
 			input.value = ''
 			input.focus()
 		}
@@ -20,7 +21,7 @@
 
 	socket.on('chat message', (msg) => {
 		const item = document.createElement('p')
-		item.textContent = msg
+		item.textContent = msg.user + ": " + msg.message
 		messages.appendChild(item)
 	})
 </script>
