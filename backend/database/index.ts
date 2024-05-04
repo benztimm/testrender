@@ -84,4 +84,39 @@ async function getUserData(userVerify:string) {
   }
 }
 
-export {insertUser, getUsers, createTable, getUserData }
+async function addRoom(roomName:string, host:string) {
+  try {
+    const queryText = 'INSERT INTO bingo_schema."Rooms" (room_name, host) VALUES ($1, $2)';
+    const queryParams = [roomName, host];
+    await query(queryText, queryParams);
+    console.log('Room inserted successfully');
+  } catch (error) {
+    console.error('Error inserting room:', error);
+    throw error;
+  }
+}
+
+async function getRooms() {
+  try {
+    const result = await query('SELECT * FROM bingo_schema."Rooms"', []);
+    return result.rows;
+  } catch (error) {
+    console.error('Error executing query', error);
+  }
+
+}
+async function getRoomId(roomName:string, host:string): Promise<any>{
+  try {
+    const queryText = `
+    Select room_id from bingo_schema."Rooms"
+    WHERE room_name =  $1 AND host = $2`;
+    const queryParams = [roomName, host];
+    const result = await query(queryText, queryParams);
+    return result.rows[0].room_id;
+  } catch (error) {
+    console.error('Error executing query', error);
+  }
+
+}
+
+export {insertUser, getUsers, createTable, getUserData,addRoom,getRooms,getRoomId }
