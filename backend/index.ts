@@ -5,7 +5,7 @@ import { Server } from 'socket.io';
 import { createServer } from 'node:http';
 import { sessionData, requiredLoginAllSites, loginRequest } from './middleware/auth';
 import { logger } from './middleware/logger'
-
+import{ addRoom,getRoomId } from './database/index'
 require('dotenv').config({path: './backend/database/config.env'})
 const app = express();
 const server = createServer(app);
@@ -33,6 +33,11 @@ io.on('connection', (socket) => {
           room: data.room
       });
   });
+  socket.on('create room', async (data) => {
+    addRoom(data.roomName, data.user);
+    const room_id = await getRoomId(data.roomName, data.user);
+    socket.emit('update room', { roomName: data.roomName, user: data.user, roomId: room_id}); // Respond back to the client
+});
 });
 
 
