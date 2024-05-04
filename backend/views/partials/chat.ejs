@@ -3,25 +3,30 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-	const socket = io()
+	const socket = io();
 
-	const form = document.getElementById('chatForm')
-	const input = document.getElementById('input')
-	const messages = document.getElementById('messages')
+	const form = document.getElementById('chatForm');
+	const input = document.getElementById('input');
+	const messages = document.getElementById('messages');
 	const user = "<%= session.user ? session.user['username'] : 'Guest' %>";
+	const roomId = "<%= roomId %>";  // This assumes you pass `roomId` when rendering the EJS
+
+	socket.emit('join room', roomId);  // Joining a specific room
 
 	form.addEventListener('submit', (e) => {
-		e.preventDefault()
+		e.preventDefault();
 		if (input.value) {
-			socket.emit('chat message', { user: user, message: input.value })
-			input.value = ''
-			input.focus()
+			socket.emit('chat message', { room: roomId, user: user, message: input.value });
+			input.value = '';
+			input.focus();
 		}
-	})
+	});
 
 	socket.on('chat message', (msg) => {
-		const item = document.createElement('p')
-		item.textContent = msg.user + ": " + msg.message
-		messages.appendChild(item)
-	})
+		if (msg.room === roomId) {
+			const item = document.createElement('p');
+			item.textContent = msg.user + ": " + msg.message;
+			messages.appendChild(item);
+		}
+	});
 </script>
