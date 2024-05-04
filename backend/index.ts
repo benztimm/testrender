@@ -22,12 +22,16 @@ app.use(requiredLoginAllSites);
 
 
 io.on('connection', (socket) => {
-  socket.broadcast.emit('hi');
-});
+  socket.on('join room', (roomId) => {
+      socket.join(roomId);
+  });
 
-io.on('connection', (socket) => {
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
+  socket.on('chat message', (data) => {
+      io.to(data.room).emit('chat message', {
+          user: data.user,
+          message: data.message,
+          room: data.room
+      });
   });
 });
 
