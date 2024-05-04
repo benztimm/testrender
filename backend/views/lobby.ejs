@@ -1,27 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Bingo Game</title>
-		<link rel="stylesheet" href="css/styles.css" />
-	</head>
-	<body>
-		<%- include('partials/navigation') %>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bingo Game</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <%- include('partials/navigation') %>
 
+    <section id="lobby" class="lobby-section">
+        <h2>Chat area</h2>
+        <%- include('partials/chat', { session: session, roomId: 'lobby' }) %>
 
-		<section id="lobby" class="lobby-section">
-            <h2>Chat area</h2>
-            <%- include('partials/chat',{session: session,roomId: 'lobby'}) %>
-		</section>
+        <button id="createRoomBtn">Create Game Room</button>
+        <h3>Game Rooms</h3>
+        <table id="roomsTable">
+            <thead>
+                <tr>
+                    <th>Room Name</th>
+                    <th>Host</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="roomsList">
+                <!-- Rooms will be added here dynamically -->
+            </tbody>
+        </table>
+    </section>
 
-
-	</body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/script/lobby.js"></script>
+</body>
 </html>
-
-
-
-
-
-
