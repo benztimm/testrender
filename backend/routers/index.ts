@@ -43,6 +43,7 @@ router.post('/logout', (req:Request, res:Response) => {
     if (err) {
       return res.redirect('/');
     }
+    res.clearCookie('connect.sid');
     res.redirect('/login');
   });
 });
