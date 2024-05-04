@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
   res.render('index',{session: req.session});
-  console.log(req.session);
 });
 
 router.get('/lobby', (req, res) => {
