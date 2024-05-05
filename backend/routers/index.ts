@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { loginRequest } from '../middleware/auth';
-import { createTable, insertUser, getUsers } from '../database/index';
+import { createTable, insertUser, getUsers, getRooms } from '../database/index';
 const bcrypt = require("bcrypt");
 const router = express.Router();
 
@@ -45,6 +45,20 @@ router.post('/logout', (req:Request, res:Response) => {
     res.clearCookie('connect.sid');
     res.redirect('/login');
   });
+});
+
+router.get('/available_rooms', async (req: Request, res: Response) => {
+  try {
+    const result = await getRooms(); // Await the getRooms() function call
+    if (result) {
+      res.json(result); // Send the result directly
+    } else {
+      res.status(500).send('Error retrieving rooms');
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error retrieving rooms');
+  }
 });
 
 

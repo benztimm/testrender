@@ -154,3 +154,43 @@ footer {
     border-width: 1px;
 }
 
+
+
+
+
+
+#roomsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#roomsTable th, #roomsTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#roomsTable th {
+    background-color: #f4f4f4;
+}
+
+.join-btn {
+    display: inline-block;
+    padding: 5px 10px;
+    color: white;
+    background-color: #007bff;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.join-btn:hover {
+    background-color: #0056b3;
+}
+
+/* New CSS for centering the button in the cell */
+#roomsList tr td a {
+    display: flex;
+    justify-content: center; /* Aligns horizontally at the center */
+    align-items: center; /* Aligns vertically at the center, not necessary if row height is not defined or is auto */
+}
+
