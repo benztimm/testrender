@@ -1,11 +1,11 @@
 import {NextFunction, Request, Response} from 'express'
 import session from 'express-session'
-import { getUserData, getUsers } from '../database';
+import { getUserData, getUsers,getUserIdByUsername } from '../database';
 const bcrypt = require("bcrypt");
 
 declare module 'express-session' {
 	interface SessionData {
-		user?: { sessionID:string, username:string,
+		user?: { sessionID:string, username:string, userId:number
 		}
 	}
 }
@@ -55,7 +55,9 @@ const loginRequest = async (req: Request, res: Response) => {
 	}
 	
 	if (await authenticate(username, password)) {
-		req.session.user = { sessionID , username }
+		const userId = parseInt(await getUserIdByUsername(username))
+		req.session.user = { sessionID , username, userId }
+		console.log(req.session.user)
 		return res.redirect('/')
 	} else {
 		return res.render('login', {errorMessage: 'Invalid username or password', session: req.session})
