@@ -6,7 +6,7 @@ import { createServer } from 'node:http';
 import { sessionData, requiredLoginAllSites, loginRequest } from './middleware/auth';
 import { logger } from './middleware/logger'
 import * as db from './database/index'
-require('dotenv').config({path: './backend/database/config.env'})
+require('dotenv').config({ path: './backend/database/config.env' })
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
@@ -23,15 +23,15 @@ app.use(express.json());
 
 io.on('connection', (socket) => {
   socket.on('join room', (roomId) => {
-      socket.join(roomId);
+    socket.join(roomId);
   });
 
   socket.on('chat message', (data) => {
-      io.to(data.room).emit('chat message', {
-          user: data.user,
-          message: data.message,
-          room: data.room
-      });
+    io.to(data.room).emit('chat message', {
+      user: data.user,
+      message: data.message,
+      room: data.room
+    });
   });
   socket.on('create room', async (data) => {
     await db.createRoom(data.roomName, data.user);
@@ -39,9 +39,23 @@ io.on('connection', (socket) => {
     const room_id = await db.getRoomId(data.roomName, data.user);
     await db.addPlayerToRoom(player_id, room_id);
 
-    
-    socket.emit('update room', { roomName: data.roomName, user: data.user, roomId: room_id}); // Respond back to the client
-});
+
+    socket.emit('update room', { roomName: data.roomName, user: data.user, roomId: room_id }); // Respond back to the client
+
+
+  });
+  socket.on('player ready', (data) => {
+    const { roomId, userId } = data;
+    io.to(roomId).emit('player ready', { userId: userId }); // Notify others in the room
+    // Update database or manage internal state as necessary
+  });
+
+  socket.on('exit room', (data) => {
+    const { roomId, userId } = data;
+    socket.leave(roomId);
+    io.to(roomId).emit('player exited', { userId: userId }); // Notify others in the room
+    // Update database or manage internal state as necessary
+  });
 });
 
 

@@ -46,7 +46,7 @@ async function checkConnection(): Promise<void> {
   try {
     const result = await query("SELECT NOW() as now", []);
     const currentTime = result.rows[0].now;
-    
+
     console.log(
       "Successfully connected to PostgreSQL server. Current time:",
       currentTime
@@ -108,9 +108,9 @@ async function getUserIdByUsername(username: string) {
   }
 }
 
-async function createRoom(roomName:string, host:string) {
+async function createRoom(roomName: string, host: string) {
   try {
-    
+
     const queryText = 'INSERT INTO bingo_schema."Rooms" (room_name, host) VALUES ($1, $2)';
     const queryParams = [roomName, host];
     await query(queryText, queryParams);
@@ -129,7 +129,7 @@ async function getRooms() {
   }
 
 }
-async function getRoomId(roomName:string, host:string): Promise<any>{
+async function getRoomId(roomName: string, host: string): Promise<any> {
   try {
     const queryText = `
     Select room_id from bingo_schema."Rooms"
@@ -143,7 +143,7 @@ async function getRoomId(roomName:string, host:string): Promise<any>{
 
 }
 
-async function getRoomDetail(roomId:Number): Promise<any>{
+async function getRoomDetail(roomId: Number): Promise<any> {
   try {
     const queryText = `
     Select * from bingo_schema."Rooms"
@@ -210,7 +210,7 @@ async function getPlayerInRoom(room_id: number) {
     throw error;
   }
 }
-async function ifPlayerInRoom(user_id:Number, room_id:Number) {
+async function ifPlayerInRoom(user_id: Number, room_id: Number) {
   try {
     const user = await query(
       `SELECT * FROM bingo_schema.room_player_table WHERE room_id = $1 AND user_id = $2`,
@@ -263,6 +263,34 @@ async function getCard(card_id: number) {
   }
 }
 
+async function getRoomDetails(room_id: Number) {
+  try {
+    const room = await query(`
+    SELECT 
+    r.room_id, 
+    r.room_name, 
+    p.user_id, 
+    host.user_id as host_id,
+	  u.username
+    FROM 
+      bingo_schema."Rooms" AS r
+    JOIN 
+      bingo_schema.room_player_table AS p ON r.room_id = p.room_id
+    JOIN 
+      bingo_schema."Users" AS host ON r.host = host.username
+    JOIN 
+      bingo_schema."Users" AS u ON p.user_id = u.user_id
+    where
+    	r.room_id = $1;
+    `, [room_id]);
+    return room.rows;
+  } catch (error) {
+    console.error("Error inserting user:", error);
+    throw error;
+  }
+
+}
+
 export {
   insertUser,
   getUsers,
@@ -279,4 +307,5 @@ export {
   getRoomDetail,
   getUserIdByUsername,
   ifPlayerInRoom,
+  getRoomDetails,
 };
