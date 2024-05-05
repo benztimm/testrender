@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
     await db.addPlayerToRoom(player_id, room_id);
 
 
-    socket.emit('update room', { roomName: data.roomName, user: data.user, roomId: room_id }); // Respond back to the client
+    io.to('lobby').emit('update room', { roomName: data.roomName, user: data.user, roomId: room_id }); // Respond back to the client
 
 
   });
@@ -67,7 +67,7 @@ io.on('connection', (socket) => {
   socket.on('delete room', async (data) => {
     const { roomId, userId } = data;
     await db.deleteRoom(roomId);
-    socket.emit('room deleted', { roomId:roomId, userId: userId }); // Notify others in the room
+    io.to('lobby').emit('room deleted', { roomId:roomId, userId: userId }); // Notify others in the room
     // Update database or manage internal state as necessary
   });
   socket.on('new player joined', async (data) => {
