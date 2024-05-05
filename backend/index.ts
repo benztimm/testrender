@@ -5,7 +5,7 @@ import { Server } from 'socket.io';
 import { createServer } from 'node:http';
 import { sessionData, requiredLoginAllSites, loginRequest } from './middleware/auth';
 import { logger } from './middleware/logger'
-import{ createRoom,getRoomId } from './database/index'
+import * as db from './database/index'
 require('dotenv').config({path: './backend/database/config.env'})
 const app = express();
 const server = createServer(app);
@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../frontend')));
 app.set('views', path.join(__dirname, 'views')).set('view engine', 'ejs');
 app.use(requiredLoginAllSites);
-
+app.use(express.json());
 
 io.on('connection', (socket) => {
   socket.on('join room', (roomId) => {
@@ -34,8 +34,12 @@ io.on('connection', (socket) => {
       });
   });
   socket.on('create room', async (data) => {
-    createRoom(data.roomName, data.user);
-    const room_id = await getRoomId(data.roomName, data.user);
+    await db.createRoom(data.roomName, data.user);
+    const player_id = await db.getUserIdByUsername(data.user);
+    const room_id = await db.getRoomId(data.roomName, data.user);
+    await db.addPlayerToRoom(player_id, room_id);
+
+    
     socket.emit('update room', { roomName: data.roomName, user: data.user, roomId: room_id}); // Respond back to the client
 });
 });

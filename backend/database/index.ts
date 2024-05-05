@@ -21,7 +21,7 @@ async function query(text: string, params: any[]): Promise<QueryResult<any>> {
   const start = Date.now();
   const res = await pool.query(text, params);
   const duration = Date.now() - start;
-  console.log("executed query", { text, duration, rows: res.rowCount });
+  //console.log("executed query", { text, duration, rows: res.rowCount });
   return res;
 }
 
@@ -46,6 +46,7 @@ async function checkConnection(): Promise<void> {
   try {
     const result = await query("SELECT NOW() as now", []);
     const currentTime = result.rows[0].now;
+    
     console.log(
       "Successfully connected to PostgreSQL server. Current time:",
       currentTime
@@ -95,8 +96,21 @@ async function getUserData(userVerify: string) {
   }
 }
 
+async function getUserIdByUsername(username: string) {
+  try {
+    const user = await query(
+      `SELECT user_id FROM bingo_schema."Users" WHERE username = $1`,
+      [username]
+    );
+    return user.rows[0].user_id;
+  } catch (error) {
+    console.error("Error executing query", error);
+  }
+}
+
 async function createRoom(roomName:string, host:string) {
   try {
+    
     const queryText = 'INSERT INTO bingo_schema."Rooms" (room_name, host) VALUES ($1, $2)';
     const queryParams = [roomName, host];
     await query(queryText, queryParams);
@@ -123,6 +137,20 @@ async function getRoomId(roomName:string, host:string): Promise<any>{
     const queryParams = [roomName, host];
     const result = await query(queryText, queryParams);
     return result.rows[0].room_id;
+  } catch (error) {
+    console.error('Error executing query', error);
+  }
+
+}
+
+async function getRoomDetail(roomId:Number): Promise<any>{
+  try {
+    const queryText = `
+    Select * from bingo_schema."Rooms"
+    WHERE room_id = $1`;
+    const queryParams = [roomId];
+    const result = await query(queryText, queryParams);
+    return result.rows[0];
   } catch (error) {
     console.error('Error executing query', error);
   }
@@ -170,11 +198,23 @@ async function removePlayerFromRoom(player_id: number, room_id: number) {
  * @param room_id ID of the specified room.
  * @returns A row of the user if it exist in the table
  */
-async function getPlayerInRoom(player_id: number, room_id: number) {
+async function getPlayerInRoom(room_id: number) {
   try {
     const user = await query(
-      `SELECT * FROM bingo_schema."Users" WHERE user_id = $1 AND room_id = $2`,
-      [player_id, room_id]
+      `SELECT * FROM bingo_schema.room_player_table WHERE room_id = $1`,
+      [room_id]
+    );
+    return user.rows;
+  } catch (error) {
+    console.error("Error inserting user:", error);
+    throw error;
+  }
+}
+async function ifPlayerInRoom(user_id:Number, room_id:Number) {
+  try {
+    const user = await query(
+      `SELECT * FROM bingo_schema.room_player_table WHERE room_id = $1 AND user_id = $2`,
+      [room_id, user_id]
     );
     return user.rows[0];
   } catch (error) {
@@ -236,4 +276,7 @@ export {
   getCard,
   getRooms,
   getRoomId,
+  getRoomDetail,
+  getUserIdByUsername,
+  ifPlayerInRoom,
 };

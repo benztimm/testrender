@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { loginRequest } from '../middleware/auth';
-import { createTable, insertUser, getUsers, getRooms } from '../database/index';
+import { createTable, insertUser, getUsers, getRooms, } from '../database/index';
+import * as db from '../database/index';
 const bcrypt = require("bcrypt");
 const router = express.Router();
 
@@ -61,5 +62,49 @@ router.get('/available_rooms', async (req: Request, res: Response) => {
   }
 });
 
+router.get('/waiting/:roomId', (req: Request, res: Response) => {
+  const roomId = req.params.roomId;
+  res.send(`Waiting room for room ${roomId}`);
+  
+  //const roomDetails = db.getRoomDetail(parseInt(roomId)); // You need to implement this function
+  /*
+  if (roomDetails) {
+      res.render('waiting-room', {
+          roomName: roomDetails.roomName,
+          host: roomDetails.host,
+          players: roomDetails.players,
+          room_id: roomId,
+          user: req.session.user // Assuming you're using sessions to track logged-in users
+      });
+  } else {
+      res.status(404).send('Room not found');
+  }*/
+});
+
+router.post('/join_room/:roomId', async (req: Request, res: Response) => {
+  if (req.session.user) {
+    const player_id = await db.getUserIdByUsername(req.session.user.username);
+    const room_id = parseInt(req.params.roomId);
+
+    // It's better to check if player_id or room_id are valid before proceeding
+    if (!player_id || isNaN(room_id)) {
+        return res.status(400).json({ message: 'Invalid user or room ID' });
+    }
+
+    const playerExistInRoom = await db.ifPlayerInRoom(player_id, room_id);
+    const allPlayers = await db.getPlayerInRoom(room_id);
+
+    if (allPlayers.length >= 4) {
+        res.status(403).json({ message: 'Room is full' });
+    } else if (playerExistInRoom) {
+        res.status(200).json({ message: 'Player already in room' });
+    } else {
+        await db.addPlayerToRoom(player_id, room_id);
+        res.status(201).json({ message: 'Player added to room' });
+    }
+} else {
+    res.status(401).json({ message: 'User not logged in' }); // 401 for unauthorized access
+}
+});
 
 export default router;
