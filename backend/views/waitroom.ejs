@@ -23,6 +23,8 @@
             </div>
         <% }); %>
     </div>
+    <div id="sessionData" data-user-username="<%= session.user.username %>"></div>
+
     <%- include('partials/chat', { session: session, roomId: roomDetails.room_id }) %>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/script/waiting-room.js"></script>
