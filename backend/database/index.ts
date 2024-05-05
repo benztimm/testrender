@@ -185,7 +185,7 @@ async function removePlayerFromRoom(player_id: number, room_id: number) {
     const queryText = `DELETE FROM bingo_schema.room_player_table WHERE user_id = $1 AND room_id = $2;`;
     const queryParams = [player_id, room_id];
     await query(queryText, queryParams);
-    console.log("User inserted successfully");
+    console.log("User deleted successfully");
   } catch (error) {
     console.error("Error inserting user:", error);
     throw error;

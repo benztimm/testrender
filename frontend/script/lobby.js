@@ -72,9 +72,8 @@ async function joinRoom(roomId) {
             }),
         });
         const data = await response.json(); // Convert the response to JSON
-        console.log('Joined room:', data);
-
         if (response.ok) {
+            socket.emit('new player joined', { user: user, roomId: roomId });
             window.location.href = `/waiting/${roomId}`; // Redirect only if fetch was successful
         } else {
             console.error('Failed to join room:', data.message); // Display server error message if available

@@ -6,6 +6,7 @@ import { createServer } from 'node:http';
 import { sessionData, requiredLoginAllSites, loginRequest } from './middleware/auth';
 import { logger } from './middleware/logger'
 import * as db from './database/index'
+import session from 'express-session';
 require('dotenv').config({ path: './backend/database/config.env' })
 const app = express();
 const server = createServer(app);
@@ -52,9 +53,19 @@ io.on('connection', (socket) => {
 
   socket.on('exit room', (data) => {
     const { roomId, userId } = data;
+    
     socket.leave(roomId);
+    db.removePlayerFromRoom(userId, roomId);
     io.to(roomId).emit('player exited', { userId: userId }); // Notify others in the room
     // Update database or manage internal state as necessary
+  });
+  socket.on('new player joined', async (data) => {
+    const user_id = await db.getUserIdByUsername(data.user)
+    io.to(data.roomId).emit('new player joined', {
+      username: data.user,
+      roomId: data.roomId,
+      userId: user_id
+    });
   });
 });
 
