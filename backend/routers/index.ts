@@ -69,6 +69,7 @@ router.get('/waiting/:roomId', async (req, res) => {
 
   try {
       const rawData = await db.getRoomDetails(parseInt(roomId));
+      const playerStatuses = await db.getAllPlayerStatus(parseInt(roomId)); // Fetch statuses
 
       // Assuming all entries have the same room details
       const roomDetails = {
@@ -77,8 +78,11 @@ router.get('/waiting/:roomId', async (req, res) => {
           host_id: rawData[0].host_id,
           players: rawData.map(player => ({
               user_id: player.user_id,
-              username: player.username
+              username: player.username,
+              status: playerStatuses.find(status => parseInt(status.player_id) === parseInt(player.user_id)).status
+
           }))
+
       };
 
       const host = rawData.find(player => player.host_id === player.user_id);
