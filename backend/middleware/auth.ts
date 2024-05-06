@@ -25,7 +25,8 @@ const sessionData = session({
 const authenticate = async (username: string, password: string): Promise<boolean> => {
 	try {
 	  const dbUser = await getUserData(username);
-	  return await bcrypt.compare(password, dbUser.password);
+	  if (dbUser) return await bcrypt.compare(password, dbUser.password);
+	  return false;
 	} catch (err) {
 	  console.error(err);
 	  return false;
@@ -41,7 +42,7 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
 }
 
 const requiredLoginAllSites = (req: Request, res: Response, next: NextFunction) => {
-	!['/login', '/register', '/' ].includes(req.path) ? isAuthenticated(req, res, next) : next();
+	!['/login', '/register', '/'].includes(req.path) ? isAuthenticated(req, res, next) : next();
 }
 
 const loginRequest = async (req: Request, res: Response) => {

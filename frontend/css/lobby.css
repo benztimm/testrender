@@ -1,0 +1,234 @@
+
+body{
+    height: auto;
+    margin: 0;
+    padding: 0;
+    /* background-color: rgba(69, 64, 64, 0.927); */
+    background-image: url('/assets/images/lobbyBg.gif');
+    width: auto;
+    background-repeat: no-repeat;
+    background-size:  100% 100%;
+    background-attachment: fixed;
+}
+
+
+.inputBx {
+    width: auto;
+    display: flex;
+    align-items: center; /* Vertically center items */
+}
+
+
+.inp{
+    /* padding: 5px; */
+    /* font-size: larger;  */
+    border-radius: 15px;
+    align-items: center;
+    text-align: center;
+
+    
+    flex: 1; 
+    margin-right: 10px;
+}
+.btn{
+
+    width: auto;
+    margin: 20px;
+    /* display: flex; */
+    /* align-items: center;
+    justify-content: center; */
+}
+
+.join-btn {
+    display: block;
+    text-align: center;
+    padding: 5px 0;
+    color: white;
+    width: 100%;
+    background-color: #007bff;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.join-btn:hover {
+    background-color: #0056b3;
+}
+
+/* button create room form */
+.lobbyBox{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* min-height: 5vh; */
+    /* width: auto; */
+    margin: 120px ;
+    /* padding: 30px; */
+    /* background: linear-gradient(-30deg, #03a9f4 0%,#3a78b7 50%, #262626 50%, #607d8b 100%); */
+    /* filter: hue-rotate(120deg); */
+    position: relative;
+    /* padding: 50px; */
+    /* background: rgba(255,255,255,0.1); */
+    border-radius: 6px;
+    /* box-shadow: 0 5px 35px rgba(0,0,0,0.2); */
+
+
+    width: 80%; 
+    margin: 0 auto;
+}
+.buttonB{
+    border: none;
+    outline: none;
+    background: rgb(201, 131, 26);
+    box-shadow: 0 7px 0 0 black;
+    border-radius: 12px;
+    height: 40px;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: 400;
+    /* letter-spacing: 4px; */
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: 0.35s;
+
+}
+button::before{
+    position:absolute;
+    content: attr(alt);
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 4px;
+    opacity: 1;
+}
+button:active{
+    box-shadow: none;
+    transform: translateY(7px);
+    transition: 0.35s;
+}
+button:hover::before{
+    opacity: 0;
+    transform: translateY(100%);
+}
+button span{
+    color: rgb(230, 146, 227);
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: all 2s ease;
+}
+button:hover span{
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.2s ease;
+    transition-delay: calc(0.045s * var(--i));
+}
+
+
+.image1{
+    margin-top: 300px ;
+    width: 22%;
+    height: 120px;
+    position: absolute;
+    left: 30px;
+    background-size: contain;
+    /* background: url("/assets/images/spin.gif") no-repeat center/cover; */
+    /* background-size: cover; 
+    background-position: center;  */
+    border: none !important ;
+    outline: none ;
+}
+
+.image2 {
+    margin-top: 300px;
+    width: 250px; 
+    height: 20%; 
+    position: absolute;
+    background-size: contain;
+    right: 15%; 
+    /* right: 10rem; */
+    /* left: 20px; */
+    background: url("/assets/images/dog.gif") no-repeat center/contain; 
+    border: none !important;
+    outline: none;
+    /* z-index: 20;  */
+}
+
+
+
+/* .livechat{
+    background: white;
+    position: absolute;
+    right: 2em;
+    bottom: 2em;
+    width: 75%;
+    border-radius: 1em;
+    box-shadow: 14px 14px 38px rgba(101, 196, 199, 0.08);
+
+    .header{
+        background: rgb(201, 174, 134);
+        padding: 1em;
+        display: flex;
+        justify-content: space-between;
+        color: white;
+        border-top-right-radius: 1em;
+        border-top-left-radius: 1em;
+    }
+    h4{
+        margin: 0;
+        font-size: 1.2rem;
+    }
+    .content{
+        padding: 1em;
+
+    }
+    .chat{
+        height: 300px;
+        overflow-y: scroll;
+    }
+    .message p.name{
+        margin-bottom: 0;
+        margin-top:0;
+    }
+    .message p.msg{
+        margin-bottom: 0;
+    }
+
+    .message.operator .name{
+        color: #5200FF;
+    }
+    .message.user .name, .message.user .msg{
+        text-align: right;
+        margin-right: 1em;
+    }
+}
+
+svg.bubble{
+    position: absolute;
+    width: 4em;
+    bottom: 2em;
+    right: 2em;
+    cursor: pointer;
+
+}
+
+svg.exit {
+    width: 1.5em;
+    cursor: pointer;
+} */
+
+.tb{
+    background-color: #bbacb3;
+    width: 100%;
+    height: 100%;
+
+}
+
+th,td{
+    padding: 10px;
+    align-items: center;
+    justify-self: center;
+    border: 2px solid black;
+    padding: 8px;
+    text-align: left;
+}

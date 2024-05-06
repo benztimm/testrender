@@ -6,8 +6,7 @@ import { createServer } from 'node:http';
 import { sessionData, requiredLoginAllSites, loginRequest } from './middleware/auth';
 import { logger } from './middleware/logger'
 import * as db from './database/index'
-import session from 'express-session';
-require('dotenv').config({ path: './backend/database/config.env' })
+require('dotenv').config() //{ path: './backend/database/config.env' }
 const app = express();
 const server = createServer(app);
 const io = new Server(server);

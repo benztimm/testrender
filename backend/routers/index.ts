@@ -2,8 +2,8 @@ import express, { Request, Response, NextFunction } from 'express';
 import { loginRequest } from '../middleware/auth';
 import { createTable, insertUser, getUsers, getRooms, } from '../database/index';
 import * as db from '../database/index';
-import session from 'express-session';
-const bcrypt = require("bcrypt");
+import bcrypt from 'bcrypt';
+
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -14,10 +14,13 @@ router.get('/lobby', (req, res) => {
   res.render('lobby', { session: req.session });
 });
 
-router.get('/register', (req, res) => {
-  res.render('register', { session: req.session });
+router.get('/login', (req: Request, res: Response) => {
+  res.render('login', { session: req.session });
 });
 
+router.get('/register', (req: Request, res: Response) => {
+  res.render('register', { session: req.session });
+});
 
 router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
@@ -29,12 +32,10 @@ router.post('/register', async (req, res) => {
 
   // - Store all of them to DB
   await insertUser(username, hash, email);
-  res.render('login', { session: req.session });
+  res.render('forms', { session: req.session });
 });
 
-router.get('/login', (req: Request, res: Response) => {
-  res.render('login', { session: req.session });
-});
+
 router.post('/login', (req: Request, res: Response) => {
   loginRequest(req, res);
 });
@@ -45,7 +46,7 @@ router.post('/logout', (req: Request, res: Response) => {
       return res.redirect('/');
     }
     res.clearCookie('connect.sid');
-    res.redirect('/login');
+    res.redirect('/forms');
   });
 });
 

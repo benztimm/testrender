@@ -1,5 +1,8 @@
-document.getElementById('createRoomBtn').addEventListener('click', function () {
-    const roomName = prompt('Enter a room name:');
+const roomNameInput = document.getElementById('roomNameInput');
+const createRoomBtn = document.getElementById('createRoomBtn');
+
+createRoomBtn.addEventListener('click', function () {
+    const roomName = roomNameInput.value;
     if (roomName) {
         socket.emit('create room', { roomName: roomName, user: user });
         socket.on('update room', (room) => {
