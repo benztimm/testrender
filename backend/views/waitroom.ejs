@@ -26,6 +26,9 @@
             </div>
         <% }); %>
     </div>
+    <% if (roomDetails.host_id === session.user.userId) { %>
+        <button id="startGame" onclick="startGame()">Start Game</button>
+    <% }; %>
     <%- include('partials/chat', { session: session, roomId: roomDetails.room_id }) %>
     <script src="/socket.io/socket.io.js"></script>
     <script>
