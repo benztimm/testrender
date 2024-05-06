@@ -113,7 +113,6 @@ function addPlayer(player, roomId, userId) {
     }
 }
 
-
 function kick(roomId, userId) {
     socket.emit('kicking player', {roomId: roomId, userId: userId});
     socket.emit('exit room', {roomId: roomId, userId: userId});
@@ -129,3 +128,44 @@ socket.on('player kicked', function(data) {
         window.location.href = '/lobby';
     }
 });
+
+
+
+
+
+function startGame(){
+    const playersDiv = document.getElementById('players');
+    const players = playersDiv.getElementsByClassName('player');
+    const playerIds = Array.from(players).map(player => parseInt(player.id.replace('player-', '')));
+    if(playerIds.length < 4){
+        window.alert('You need at least 4 players to start the game');
+        return;
+    }else{
+        startingGame(playerIds, roomId, hostId);    
+    }
+}
+
+async function startingGame(playerIds, roomId, hostId) {
+    try {
+        const response = await fetch(`/starting_game/${roomId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                host_id: parseInt(hostId),
+                players: playerIds,
+                room_id: parseInt(roomId)
+            }),
+        });
+        const data = await response.json(); // Convert the response to JSON
+        if (response.ok) {
+            window.alert('Game started successfully');
+            //window.location.href = `/waiting/${roomId}`; // Redirect only if fetch was successful
+        } else {
+            window.alert('Failed to join room:', data.message); // Display server error message if available
+        }
+    } catch (error) {
+        console.error('Failed to join room', error);
+    }
+}
