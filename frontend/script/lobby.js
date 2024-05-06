@@ -95,7 +95,7 @@ async function joinRoom(roomId) {
             window.location.href = `/waiting/${roomId}`; // Redirect only if fetch was successful
             }
         } else {
-            console.error('Failed to join room:', data.message); // Display server error message if available
+            window.alert('Failed to join room: '+ data.message); // Display server error message if available
         }
     } catch (error) {
         console.error('Failed to join room', error);
