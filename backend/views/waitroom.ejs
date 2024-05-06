@@ -14,8 +14,10 @@
     <div id="players">
         <% players.forEach(function(player) { %>
             <div class="player" id="player-<%= player.user_id %>">
-                <p><span id="username-<%= player.user_id %>"><%= player.username %></span> - <span id="status-<%= player.user_id %>">Not Ready</span>
-                <% if (player.username === session.user.username) { %>
+                <p>
+                    <span id="username-<%= player.user_id %>"><%= player.username %></span> - 
+                    <span id="status-<%= player.user_id %>"><%= player.status ? 'Ready' : 'Not Ready' %></span>
+                    <% if (player.username === session.user.username) { %>
                     <button id="readyButton-<%= player.user_id %>" onclick="markReady('<%= roomDetails.room_id %>', '<%= player.user_id %>')">Ready</button>
                     <button onclick="exitRoom('<%= roomDetails.room_id %>', '<%= player.user_id %>')">Exit</button>  
                 <% } %>
