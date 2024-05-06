@@ -127,6 +127,59 @@ router.post('/join_room/:roomId', async (req: Request, res: Response) => {
 router.get('/game', async (req, res) => {
   res.render('game');
 });
+
+
+router.get('/game/:roomId', async (req, res) => {
+  const roomId = req.params.roomId;
+  try {
+      res.send(`Game room ${roomId}`)
+  } catch (error) {
+      console.error('Failed to load game room', error);
+      res.status(500).send('Internal Server Error');
+  }
+});
+
+router.post('/starting_game/:roomId', async (req: Request, res: Response) => {
+  const { host_id, players, room_id } = req.body;
+  const cardCollection = await db.insertFourCard();
+  if (Array.isArray(cardCollection) && cardCollection.length >= players.length) {
+    for (let i = 0; i < players.length; i++) {
+      await db.assignCardToPlayer(players[i], cardCollection[i].card_id, room_id);
+    }
+    res.status(200).json({ message: 'Game started' });
+  } else {
+    res.status(400).json({ message: 'Invalid players or card collection' });
+  }
+  /*
+  if (req.session.user) {
+    const player_id = await db.getUserIdByUsername(req.session.user.username);
+    const room_id = parseInt(req.params.roomId);
+
+    // It's better to check if player_id or room_id are valid before proceeding
+    if (!player_id || isNaN(room_id)) {
+      return res.status(400).json({ message: 'Invalid user or room ID' });
+    }
+
+    const playerExistInRoom = await db.ifPlayerInRoom(player_id, room_id);
+    const allPlayers = await db.getPlayerInRoom(room_id);
+    if (allPlayers.length >= 4 && !playerExistInRoom) {
+      res.status(403).json({ message: 'Room is full' });
+    } else {
+      if (playerExistInRoom) {
+        res.status(200).json({ message: 'Player added to room, joining' });
+      } else {
+        await db.addPlayerToRoom(player_id, room_id);
+        res.status(201).json({ message: 'Player added to room' });
+      }
+    }
+  } else {
+    res.status(401).json({ message: 'User not logged in' }); // 401 for unauthorized access
+  }*/
+});
+
+
+
+
 export default router;
 /**
  * if (allPlayers.length >= 4) {
