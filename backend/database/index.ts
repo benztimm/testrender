@@ -120,6 +120,20 @@ async function createRoom(roomName: string, host: string) {
     throw error;
   }
 }
+
+async function deleteRoom(roomId: number) {
+  try {
+    const queryText = 'DELETE FROM bingo_schema."Rooms" WHERE room_id = $1';
+    const queryParams = [roomId];
+    await query(queryText, queryParams);
+    console.log('Room deleted successfully');
+  } catch (error) {
+    console.error('Error deleting room:', error);
+    throw error;
+  }
+
+}
+
 async function getRooms() {
   try {
     const result = await query('SELECT * FROM bingo_schema."Rooms"', []);
@@ -308,4 +322,5 @@ export {
   getUserIdByUsername,
   ifPlayerInRoom,
   getRoomDetails,
+  deleteRoom,
 };

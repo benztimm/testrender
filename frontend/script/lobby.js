@@ -10,6 +10,7 @@ document.getElementById('createRoomBtn').addEventListener('click', function () {
 });
 function addEntry(host,roomName,roomId,roomsList) {
     const row = document.createElement('tr');
+    row.setAttribute('room', roomId);
     
     const roomNameCell = document.createElement('td');
     roomNameCell.textContent = roomName;
@@ -42,6 +43,12 @@ function addEntry(host,roomName,roomId,roomsList) {
 socket.on('update room', (room) => {
     const roomsList = document.getElementById('roomsList');
     addEntry(room.user,room.roomName,room.roomId,roomsList);
+});
+
+socket.on('room deleted', (data) => {
+    const roomId = data.roomId;
+    const roomElement = document.querySelector(`[room="${roomId}"]`);
+    roomElement.parentNode.removeChild(roomElement);
 });
 
 async function fetchRooms() {

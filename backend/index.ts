@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
     await db.addPlayerToRoom(player_id, room_id);
 
 
-    socket.emit('update room', { roomName: data.roomName, user: data.user, roomId: room_id }); // Respond back to the client
+    io.to('lobby').emit('update room', { roomName: data.roomName, user: data.user, roomId: room_id }); // Respond back to the client
 
 
   });
@@ -54,9 +54,20 @@ io.on('connection', (socket) => {
   socket.on('exit room', (data) => {
     const { roomId, userId } = data;
     
-    socket.leave(roomId);
     db.removePlayerFromRoom(userId, roomId);
     io.to(roomId).emit('player exited', { userId: userId }); // Notify others in the room
+    // Update database or manage internal state as necessary
+  });
+  socket.on('kicking player', (data) => {
+    const { roomId, userId } = data;
+    io.to(roomId).emit('player kicked', { userId: userId }); // Notify others in the room
+    // Update database or manage internal state as necessary
+  });
+
+  socket.on('delete room', async (data) => {
+    const { roomId, userId } = data;
+    await db.deleteRoom(roomId);
+    io.to('lobby').emit('room deleted', { roomId:roomId, userId: userId }); // Notify others in the room
     // Update database or manage internal state as necessary
   });
   socket.on('new player joined', async (data) => {

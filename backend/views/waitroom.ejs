@@ -14,19 +14,25 @@
     <div id="players">
         <% players.forEach(function(player) { %>
             <div class="player" id="player-<%= player.user_id %>">
-                <!-- Wrap username and readiness status in spans for easier manipulation -->
-                <p><span id="username-<%= player.user_id %>"><%= player.username %></span> - <span id="status-<%= player.user_id %>">Not Ready</span></p>
+                <p><span id="username-<%= player.user_id %>"><%= player.username %></span> - <span id="status-<%= player.user_id %>">Not Ready</span>
                 <% if (player.username === session.user.username) { %>
                     <button id="readyButton-<%= player.user_id %>" onclick="markReady('<%= roomDetails.room_id %>', '<%= player.user_id %>')">Ready</button>
-                    <button onclick="exitRoom('<%= roomDetails.room_id %>', '<%= player.user_id %>')">Exit</button>
+                    <button onclick="exitRoom('<%= roomDetails.room_id %>', '<%= player.user_id %>')">Exit</button>  
                 <% } %>
+                <% if (roomDetails.host_id === session.user.userId && player.user_id !== session.user.userId) { %>
+                    <button onclick="kick('<%= roomDetails.room_id %>', '<%= player.user_id %>')">kick</button>
+                <% } %>
+                </p>
             </div>
         <% }); %>
     </div>
-    <div id="sessionData" data-user-username="<%= session.user.username %>"></div>
-
     <%- include('partials/chat', { session: session, roomId: roomDetails.room_id }) %>
     <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const hostId = "<%= roomDetails.host_id %>";
+        const sessionUsername = "<%= session.user.username %>";
+        const sessionUserId = "<%= session.user.userId %>";
+    </script>
     <script src="/script/waiting-room.js"></script>
 
 </body>
