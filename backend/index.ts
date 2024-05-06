@@ -66,9 +66,9 @@ io.on('connection', (socket) => {
     io.to(roomId).emit('player exited', { userId: userId }); // Notify others in the room
     // Update database or manage internal state as necessary
   });
-  socket.on('kicking player', (data) => {
+  socket.on('kicking player', async(data) => {
     const { roomId, userId } = data;
-    db.deletePlayerStatus(userId, roomId);
+    await db.deletePlayerStatus(userId, roomId);
     io.to(roomId).emit('player kicked', { userId: userId }); // Notify others in the room
     // Update database or manage internal state as necessary
   });
@@ -82,11 +82,6 @@ io.on('connection', (socket) => {
   });
   socket.on('new player joined', async (data) => {
     const user_id = await db.getUserIdByUsername(data.user)
-    const statusExist = await db.getPlayerStatus(user_id, data.roomId)
-    if(!statusExist){
-      await db.insertPlayerStatus(user_id, data.roomId);
-
-    }
     io.to(data.roomId).emit('new player joined', {
       username: data.user,
       roomId: data.roomId,
