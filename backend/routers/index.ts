@@ -124,6 +124,9 @@ router.post('/join_room/:roomId', async (req: Request, res: Response) => {
   }
 });
 
+router.get('/game', async (req, res) => {
+  res.render('game');
+});
 export default router;
 /**
  * if (allPlayers.length >= 4) {
