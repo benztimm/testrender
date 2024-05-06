@@ -39,27 +39,36 @@ io.on('connection', (socket) => {
     const player_id = await db.getUserIdByUsername(data.user);
     const room_id = await db.getRoomId(data.roomName, data.user);
     await db.addPlayerToRoom(player_id, room_id);
+    await db.insertPlayerStatus(player_id, room_id);
 
 
     io.to('lobby').emit('update room', { roomName: data.roomName, user: data.user, roomId: room_id }); // Respond back to the client
 
 
   });
-  socket.on('player ready', (data) => {
+  socket.on('player ready', async (data) => {
     const { roomId, userId } = data;
+    const playerStatus = await db.getPlayerStatus(userId, roomId);
+    if(playerStatus.status === false){
+      await db.updatePlayerStatus(userId, roomId, true);
+    }else{
+      await db.updatePlayerStatus(userId, roomId, false);
+    }
     io.to(roomId).emit('player ready', { userId: userId }); // Notify others in the room
     // Update database or manage internal state as necessary
   });
 
-  socket.on('exit room', (data) => {
+  socket.on('exit room', async(data) => {
     const { roomId, userId } = data;
     
-    db.removePlayerFromRoom(userId, roomId);
+    await db.removePlayerFromRoom(userId, roomId);
+    await db.deletePlayerStatus(userId, roomId);
     io.to(roomId).emit('player exited', { userId: userId }); // Notify others in the room
     // Update database or manage internal state as necessary
   });
   socket.on('kicking player', (data) => {
     const { roomId, userId } = data;
+    db.deletePlayerStatus(userId, roomId);
     io.to(roomId).emit('player kicked', { userId: userId }); // Notify others in the room
     // Update database or manage internal state as necessary
   });
@@ -67,16 +76,26 @@ io.on('connection', (socket) => {
   socket.on('delete room', async (data) => {
     const { roomId, userId } = data;
     await db.deleteRoom(roomId);
+    await db.deletePlayerStatus(userId, roomId);
     io.to('lobby').emit('room deleted', { roomId:roomId, userId: userId }); // Notify others in the room
     // Update database or manage internal state as necessary
   });
   socket.on('new player joined', async (data) => {
     const user_id = await db.getUserIdByUsername(data.user)
+    const statusExist = await db.getPlayerStatus(user_id, data.roomId)
+    if(!statusExist){
+      await db.insertPlayerStatus(user_id, data.roomId);
+
+    }
     io.to(data.roomId).emit('new player joined', {
       username: data.user,
       roomId: data.roomId,
       userId: user_id
     });
+  });
+
+  socket.on('starting game', (data) => {
+    io.to(data.roomId).emit('game started', { roomId: data.roomId });
   });
 });
 
