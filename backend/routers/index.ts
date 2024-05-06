@@ -68,35 +68,50 @@ router.get('/waiting/:roomId', async (req, res) => {
   const roomId = req.params.roomId;
 
   try {
-      const rawData = await db.getRoomDetails(parseInt(roomId));
-      const playerStatuses = await db.getAllPlayerStatus(parseInt(roomId)); // Fetch statuses
+    const rawData = await db.getRoomDetails(parseInt(roomId));
+    const playerStatuses = await db.getAllPlayerStatus(parseInt(roomId)); // Fetch statuses
 
-      // Assuming all entries have the same room details
-      const roomDetails = {
-          room_id: rawData[0].room_id,
-          room_name: rawData[0].room_name,
-          host_id: rawData[0].host_id,
-          players: rawData.map(player => ({
-              user_id: player.user_id,
-              username: player.username,
-              status: playerStatuses.find(status => parseInt(status.player_id) === parseInt(player.user_id)).status
+    // Assuming all entries have the same room details
+    const roomDetails = {
+      room_id: rawData[0].room_id,
+      room_name: rawData[0].room_name,
+      host_id: rawData[0].host_id,
+      players: rawData.map(player => ({
+        user_id: player.user_id,
+        username: player.username,
+        status: playerStatuses.find(status => parseInt(status.player_id) === parseInt(player.user_id)).status
 
-          }))
+      }))
 
-      };
+    };
 
-      const host = rawData.find(player => player.host_id === player.user_id);
-      res.render('waitroom', {
-          roomDetails: roomDetails,
-          players: roomDetails.players,
-          host: host,
-          user: req.session.user, // Assuming session management
-          session: req.session
-          
-      });
+    const host = rawData.find(player => player.host_id === player.user_id);
+    res.render('waitroom', {
+      roomDetails: roomDetails,
+      players: roomDetails.players,
+      host: host,
+      user: req.session.user, // Assuming session management
+      session: req.session
+
+    });
   } catch (error) {
-      console.error('Failed to load room details:', error);
-      res.status(500).send('Internal Server Error');
+    console.error('Failed to load room details:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+router.post('/add_user_status', async (req: Request, res: Response) => {
+  try {
+    const { username, room_id } = req.body;
+    const user_id = await db.getUserIdByUsername(username);
+    const statusExist = await db.getPlayerStatus(user_id, room_id)
+    if (statusExist === undefined) {
+      await db.insertPlayerStatus(user_id, room_id);
+    }
+    res.status(201).json({ message: 'Player status added' });
+  } catch (error) {
+    console.error('Failed to join room:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
@@ -136,10 +151,10 @@ router.get('/game', async (req, res) => {
 router.get('/game/:roomId', async (req, res) => {
   const roomId = req.params.roomId;
   try {
-      res.send(`Game room ${roomId}`)
+    res.send(`Game room ${roomId}`)
   } catch (error) {
-      console.error('Failed to load game room', error);
-      res.status(500).send('Internal Server Error');
+    console.error('Failed to load game room', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
