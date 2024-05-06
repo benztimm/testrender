@@ -338,6 +338,69 @@ async function assignCardToPlayer(player_id: number, card_id: number, room_id: n
   }
 }
 
+async function insertPlayerStatus(player_id: number, room_id: number) {
+  try{
+    const queryText = `INSERT INTO bingo_schema.player_ready_status(player_id, room_id)VALUES ($1, $2);`;
+    const queryParams = [player_id, room_id];
+    await query(queryText, queryParams);
+    console.log("Player status inserted successfully");
+  }
+  catch (error) {
+    console.error("Error inserting status:", error);
+    throw error;
+  }
+}
+
+async function getPlayerStatus(player_id: number, room_id: number) {
+  try {
+    const status = await query(
+      `SELECT status FROM bingo_schema.player_ready_status WHERE player_id = $1 AND room_id = $2`,
+      [player_id, room_id]
+    );
+    return status.rows[0];
+  } catch (error) {
+    console.error("Error inserting user:", error);
+    throw error;
+  }
+}
+
+async function updatePlayerStatus(player_id: number, room_id: number, status: boolean) {
+  try {
+    const queryText = `UPDATE bingo_schema.player_ready_status SET status = $1 WHERE player_id = $2 AND room_id = $3;`;
+    const queryParams = [status, player_id, room_id];
+    await query(queryText, queryParams);
+    console.log("Player status updated successfully");
+  } catch (error) {
+    console.error("Error inserting user:", error);
+    throw error;
+  }
+}
+
+async function deletePlayerStatus(player_id: number, room_id: number) {
+  try {
+    const queryText = `DELETE FROM bingo_schema.player_ready_status WHERE player_id = $1 AND room_id = $2;`;
+    const queryParams = [player_id, room_id];
+    await query(queryText, queryParams);
+    console.log("Player status deleted successfully");
+  } catch (error) {
+    console.error("Error inserting user:", error);
+    throw error;
+  }
+}
+
+async function getAllPlayerStatus(room_id: number) {
+  try {
+    const status = await query(
+      `SELECT * FROM bingo_schema.player_ready_status WHERE room_id = $1`,
+      [room_id]
+    );
+    return status.rows;
+  } catch (error) {
+    console.error("Error inserting user:", error);
+    throw error;
+  }
+}
+
 
 
 
@@ -361,5 +424,11 @@ export {
   getRoomDetails,
   deleteRoom,
   insertFourCard,
-  assignCardToPlayer
+  assignCardToPlayer,
+  insertPlayerStatus,
+  getPlayerStatus,
+  updatePlayerStatus,
+  deletePlayerStatus,
+  getAllPlayerStatus,
+
 };
