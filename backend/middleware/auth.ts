@@ -57,7 +57,6 @@ const loginRequest = async (req: Request, res: Response) => {
 	if (await authenticate(username, password)) {
 		const userId = parseInt(await getUserIdByUsername(username))
 		req.session.user = { sessionID , username, userId }
-		console.log(req.session.user)
 		return res.redirect('/')
 	} else {
 		return res.render('login', {errorMessage: 'Invalid username or password', session: req.session})

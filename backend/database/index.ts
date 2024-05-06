@@ -1,11 +1,10 @@
 import { Pool, PoolConfig, QueryResult } from "pg";
-
+import * as card from "../middleware/card";
 const result = require("dotenv").config();
 
 if (result.error) {
   console.error(result.error);
 }
-
 const dbConfig: PoolConfig = {
   user: process.env.POSTGRE_ID,
   password: process.env.POSTGRE_PASS,
@@ -305,6 +304,107 @@ async function getRoomDetails(room_id: Number) {
 
 }
 
+async function insertFourCard(){
+    const collection: number[][][] = [];
+    for (let i = 0; i<4; i++){
+        collection.push(card.generateCard());
+    }
+    try {
+        const queryText = `
+        INSERT INTO bingo_schema.cards_table (card_data)
+        VALUES ($1), ($2), ($3), ($4)
+        RETURNING card_id, card_data;
+      `;
+        const queryParams = [JSON.stringify(collection[0]), JSON.stringify(collection[1]), JSON.stringify(collection[2]), JSON.stringify(collection[3])];
+
+        const result = await query(queryText, queryParams);
+        console.log("4 cards inserted successfully");
+        return result.rows;
+    } catch (error) {
+        console.error("Error inserting card:", error);
+        throw error;
+    }
+}
+
+async function assignCardToPlayer(player_id: number, card_id: number, room_id: number) {
+  try {
+    const queryText = `INSERT INTO bingo_schema.player_card(player_id, card_id, room_id)VALUES ($1, $2, $3);`;
+    const queryParams = [player_id, card_id, room_id];
+    await query(queryText, queryParams);
+    console.log("card assigned to player successfully");
+  } catch (error) {
+    console.error("Error inserting user:", error);
+    throw error;
+  }
+}
+
+async function insertPlayerStatus(player_id: number, room_id: number) {
+  try{
+    const queryText = `INSERT INTO bingo_schema.player_ready_status(player_id, room_id)VALUES ($1, $2);`;
+    const queryParams = [player_id, room_id];
+    await query(queryText, queryParams);
+    console.log("Player status inserted successfully");
+  }
+  catch (error) {
+    console.error("Error inserting status:", error);
+    throw error;
+  }
+}
+
+async function getPlayerStatus(player_id: number, room_id: number) {
+  try {
+    const status = await query(
+      `SELECT status FROM bingo_schema.player_ready_status WHERE player_id = $1 AND room_id = $2`,
+      [player_id, room_id]
+    );
+    return status.rows[0];
+  } catch (error) {
+    console.error("Error inserting user:", error);
+    throw error;
+  }
+}
+
+async function updatePlayerStatus(player_id: number, room_id: number, status: boolean) {
+  try {
+    const queryText = `UPDATE bingo_schema.player_ready_status SET status = $1 WHERE player_id = $2 AND room_id = $3;`;
+    const queryParams = [status, player_id, room_id];
+    await query(queryText, queryParams);
+    console.log("Player status updated successfully");
+  } catch (error) {
+    console.error("Error inserting user:", error);
+    throw error;
+  }
+}
+
+async function deletePlayerStatus(player_id: number, room_id: number) {
+  try {
+    const queryText = `DELETE FROM bingo_schema.player_ready_status WHERE player_id = $1 AND room_id = $2;`;
+    const queryParams = [player_id, room_id];
+    await query(queryText, queryParams);
+    console.log("Player status deleted successfully");
+  } catch (error) {
+    console.error("Error inserting user:", error);
+    throw error;
+  }
+}
+
+async function getAllPlayerStatus(room_id: number) {
+  try {
+    const status = await query(
+      `SELECT * FROM bingo_schema.player_ready_status WHERE room_id = $1`,
+      [room_id]
+    );
+    return status.rows;
+  } catch (error) {
+    console.error("Error inserting user:", error);
+    throw error;
+  }
+}
+
+
+
+
+
 export {
   insertUser,
   getUsers,
@@ -323,4 +423,12 @@ export {
   ifPlayerInRoom,
   getRoomDetails,
   deleteRoom,
+  insertFourCard,
+  assignCardToPlayer,
+  insertPlayerStatus,
+  getPlayerStatus,
+  updatePlayerStatus,
+  deletePlayerStatus,
+  getAllPlayerStatus,
+
 };
