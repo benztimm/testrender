@@ -1,0 +1,42 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+h1 {
+  color: #333;
+}
+.bingo-card {
+  display: inline-block;
+  margin: 20px;
+  border: 2px solid #333;
+  padding: 10px;
+  border-radius: 10px;
+  width: 200px;
+}
+.bingo-number {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+.bingo-row {
+  display: flex;
+  justify-content: space-between;
+}
+.bingo-cell {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.free-space {
+  background-color: lightgray;
+}
+#called-numbers {
+  margin-top: 20px;
+}
+
+.marked {
+  background-color: blue;
+}
