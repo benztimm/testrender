@@ -17,7 +17,7 @@ const sessionData = session({
 	cookie: {
 		secure: false,
 		httpOnly: true,
-		maxAge: 1 * 10 * 60 * 1000,
+		maxAge: 1 * 60 * 60 * 1000,
 	},
 })
 

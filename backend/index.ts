@@ -1,3 +1,6 @@
+import dotenv from 'dotenv'
+dotenv.config() //{ path: './backend/database/config.env' }
+
 import express, { Request, Response, NextFunction } from 'express';
 import homeRouter from './routers';
 import path from 'path';
@@ -6,7 +9,7 @@ import { createServer } from 'node:http';
 import { sessionData, requiredLoginAllSites, loginRequest } from './middleware/auth';
 import { logger } from './middleware/logger'
 import * as db from './database/index'
-require('dotenv').config() //{ path: './backend/database/config.env' }
+
 const app = express();
 const server = createServer(app);
 const io = new Server(server);

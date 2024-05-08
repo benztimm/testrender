@@ -56,23 +56,12 @@ body{
 
 /* button create room form */
 .lobbyBox{
-    display: flex;
+    display: flexbox;
+    width: 450px;
     align-items: center;
     justify-content: center;
-    /* min-height: 5vh; */
-    /* width: auto; */
     margin: 120px ;
-    /* padding: 30px; */
-    /* background: linear-gradient(-30deg, #03a9f4 0%,#3a78b7 50%, #262626 50%, #607d8b 100%); */
-    /* filter: hue-rotate(120deg); */
     position: relative;
-    /* padding: 50px; */
-    /* background: rgba(255,255,255,0.1); */
-    border-radius: 6px;
-    /* box-shadow: 0 5px 35px rgba(0,0,0,0.2); */
-
-
-    width: 80%; 
     margin: 0 auto;
 }
 .buttonB{

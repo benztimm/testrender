@@ -1,96 +1,83 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/menu.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <title>Bingo</title>
-</head>
-<body>
-
-    <section class="menu-cubes">
-        <div class="logo">
-            <h2> BINGO </h2>
+<section class="menu-cubes">
+    <div class="logo">
+        <h2> BINGO </h2>
+    </div>
+<div class="container">
+    
+    <a href="/" class="button">
+        <!-- <div class="box_shadow"></div> -->
+        <!-- <span>Home</span> -->    
+        <div class="menuBox">
+            <div class="box_face box_face_front"><i class="fa-solid fa-house"></i></div>
+            <div class="box_face box_face_right"></div>
+            <div class="box_face box_face_back"></div>
+            <div class="box_face box_face_left"></div>
+            <div class="box_face box_face_top"></div>
         </div>
-    <div class="container">
-        
-        <a href="/" class="button">
-            <!-- <div class="box_shadow"></div> -->
-            <!-- <span>Home</span> -->    
-            <div class="menuBox">
-                <div class="box_face box_face_front"><i class="fa-solid fa-house"></i></div>
-                <div class="box_face box_face_right"></div>
-                <div class="box_face box_face_back"></div>
-                <div class="box_face box_face_left"></div>
-                <div class="box_face box_face_top"></div>
-            </div>
-        </a>
-        
-        <a href="/lobby" class="button">
-            <div class="box_shadow"></div>
-            <span>Lobby</span>
-            <div class="menuBox">
-                <div class="box_face box_face_front"><i class="fa-solid fa-dice-d20"></i></ion-icon></div>
-                <div class="box_face box_face_right"></div>
-                <div class="box_face box_face_back"></div>
-                <div class="box_face box_face_left"></div>
-                <div class="box_face box_face_top"></div>
-            </div>
-        </a>
     </a>
     
-        <a href="/chat" class="button">
+    <a href="/lobby" class="button">
+        <div class="box_shadow"></div>
+        <span>Lobby</span>
+        <div class="menuBox">
+            <div class="box_face box_face_front"><i class="fa-solid fa-dice-d20"></i></ion-icon></div>
+            <div class="box_face box_face_right"></div>
+            <div class="box_face box_face_back"></div>
+            <div class="box_face box_face_left"></div>
+            <div class="box_face box_face_top"></div>
+        </div>
+    </a>
+</a>
+
+    <a href="/chat" class="button">
+        <div class="box_shadow"></div>
+        <span>Chat</span>
+        <div class="menuBox">
+            <div class="box_face box_face_front"><i class="fa-brands fa-rocketchat"></i></div>
+            <div class="box_face box_face_right"></div>
+            <div class="box_face box_face_back"></div>
+            <div class="box_face box_face_left"></div>
+            <div class="box_face box_face_top"></div>
+        </div>
+    </a>
+
+
+    <% if (session && session.user) { %>
+        <a href="/profile">
+        <div class="button">
             <div class="box_shadow"></div>
-            <span>Chat</span>
+            <span>Profile</span>
             <div class="menuBox">
-                <div class="box_face box_face_front"><i class="fa-brands fa-rocketchat"></i></div>
+                <div class="box_face box_face_front"><i class="fa-solid fa-user"></i></ion-icon></div>
                 <div class="box_face box_face_right"></div>
                 <div class="box_face box_face_back"></div>
                 <div class="box_face box_face_left"></div>
                 <div class="box_face box_face_top"></div>
             </div>
+        </div>
         </a>
-    
 
-        <% if (session && session.user) { %>
-            <div class="button">
+    
+        <form action="/logout" method="POST">
+            <button class="button" type="submit">
                 <div class="box_shadow"></div>
                 <span>Profile</span>
                 <div class="menuBox">
-                    <div class="box_face box_face_front"><a href="/profile"></a><i class="fa-solid fa-user"></i></ion-icon></div>
+                    <div class="box_face box_face_front"><i class="fa-solid fa-right-to-bracket"></i></div>
                     <div class="box_face box_face_right"></div>
                     <div class="box_face box_face_back"></div>
                     <div class="box_face box_face_left"></div>
                     <div class="box_face box_face_top"></div>
                 </div>
             </div>
-
-            <form action="/logout" method="POST" style="display:inline;">
-                <button class="button" type="submit">
-                    <div class="box_shadow"></div>
-                    <span>Sign Out</span>
-                    <div class="menuBox">
-                        <div class="box_face box_face_front">
-                            <i class="fa-solid fa-right-to-bracket"></i>
-                        </div>
-                        <div class="box_face box_face_right"></div>
-                        <div class="box_face box_face_back"></div>
-                        <div class="box_face box_face_left"></div>
-                        <div class="box_face box_face_top"></div>
-                    </div>
-                </button>
-            </form>
-            
-        <% } %>
-       
-    </div>
+        </form>
+        
+    <% } %>
+   
+</div>
 </section>
 <!-- </div> -->
-    <!-- menu cubes icon-->
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-</body>
-</html>
-
+<!-- menu cubes icon-->
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>

@@ -9,6 +9,7 @@ body {
     display: flexbox;
     justify-content: center;
     align-items: center;
+    background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
 }
 
 h1{
@@ -194,3 +195,14 @@ footer {
     align-items: center; /* Aligns vertically at the center, not necessary if row height is not defined or is auto */
 }
 
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}

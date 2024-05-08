@@ -32,7 +32,7 @@ router.post('/register', async (req, res) => {
 
   // - Store all of them to DB
   await insertUser(username, hash, email);
-  res.render('forms', { session: req.session });
+  res.render('login', { session: req.session });
 });
 
 
@@ -46,7 +46,7 @@ router.post('/logout', (req: Request, res: Response) => {
       return res.redirect('/');
     }
     res.clearCookie('connect.sid');
-    res.redirect('/forms');
+    res.redirect('/login');
   });
 });
 

@@ -1,9 +1,15 @@
 const roomNameInput = document.getElementById('roomNameInput');
 const createRoomBtn = document.getElementById('createRoomBtn');
 
-createRoomBtn.addEventListener('click', function () {
+document.getElementById('createRoomBtn').addEventListener('click', function () {
     const roomName = roomNameInput.value;
     if (roomName) {
+        const usernames = Array.from(document.querySelectorAll('#roomsList tr td:nth-child(2)'))
+                                .map(td => td.textContent.trim());
+        if (usernames.includes(user_name)) {
+            window.alert('You have already created a room');
+            return;
+        }
         socket.emit('create room', { roomName: roomName, user: user });
         socket.on('update room', (room) => {
             console.log('Room created:', room);
@@ -97,8 +103,8 @@ async function joinRoom(roomId) {
             if (response.ok) {
             window.location.href = `/waiting/${roomId}`; // Redirect only if fetch was successful
             }
-        } else {
-            window.alert('Failed to join room: '+ data.message); // Display server error message if available
+        // } else {
+        //     window.alert('Failed to join room: '+ data.message); // Display server error message if available
         }
     } catch (error) {
         console.error('Failed to join room', error);

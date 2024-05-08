@@ -1,23 +1,24 @@
 socket.on('player ready', function (data) {
     const { userId } = data;
     const statusElement = document.getElementById('status-' + userId);
-    if (statusElement) {
-        if (statusElement.textContent === 'Ready') {
-            statusElement.textContent = 'Not Ready';
-        } else {
-            statusElement.textContent = 'Ready';
-        }
-    }
     const buttonElement = document.getElementById('readyButton-' + userId);
-    if (buttonElement) {
-        if (buttonElement.textContent === 'Ready') {
-            buttonElement.textContent = 'Not Ready';
-        } else {
-            buttonElement.textContent = 'Ready';
-        }
-    }
-});
+    //Add color indicated for user status
+    const statusColor = document.getElementById(`status-color-${userId}`);
 
+    if (buttonElement) {
+        buttonElement.textContent = buttonElement.textContent === 'Ready' ? 'Not Ready' : 'Ready';
+    }
+
+    if (statusElement) {
+        statusElement.textContent = statusElement.textContent === 'Ready' ? 'Not Ready' : 'Ready';
+    }
+    
+    if (statusColor) {
+        statusColor.style.backgroundColor = statusColor.style.backgroundColor === 'green' ? 'red': 'green';
+    }
+    
+});
+        
 // Listen for 'player exited' events
 socket.on('player exited', function (data) {
     const { userId } = data;
@@ -46,16 +47,20 @@ function exitRoom(roomId, userId) {
         window.alert('Host cannot exit the room if there are other players in the room. Please ask other players to exit the room first.');
         return;
     }
-    socket.emit('exit room', { roomId: roomId, userId: userId });
     if (userId === hostId && playerElement.childElementCount === 1) {
         const userResponse = confirm("Do you want to proceed? This will delete the room.");
         if (userResponse) {
+            socket.emit('exit room', { roomId: roomId, userId: userId });
             socket.emit('delete room', { roomId: roomId, userId: userId });
+            window.location.href = '/lobby';
+            return;
         }
         else {
             return;
         }
     }
+    socket.emit('exit room', { roomId: roomId, userId: userId });
+
     window.location.href = '/lobby';
 }
 
