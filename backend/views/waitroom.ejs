@@ -22,9 +22,9 @@
 					<p class="name" id="username-<%= player.user_id %>"><%= (player.username).toUpperCase() %></p>
 				</div>
 
-				<span id="status-<%= player.user_id %>"><%= player.status ? 'Ready' : 'Not Ready' %></span>
+				<span class="userStatus" id="status-<%= player.user_id %>"><%= player.status ? 'Ready' : 'Not Ready' %></span>
 
-				<span class="statusColor" id="status-color-<%= player.user_id %>" style="background-color: <%= player.status ? 'green' : 'red' %>"></span>
+				<span class="statusColor" id="status-color-<%= player.user_id %>" style="background-color: <%= player.status ? 'rgb(181, 255, 69)' : 'rgb(255, 0, 0)' %>"></span>
 				<% if (player.username === session.user.username) { %>
 
 				<button class="buttons ready" id="readyButton-<%= player.user_id %>" onclick="markReady('<%= roomDetails.room_id %>', '<%= player.user_id %>')">Ready</button>

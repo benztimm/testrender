@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from 'express'
 import session from 'express-session'
 import { getUserData, getUsers,getUserIdByUsername } from '../database';
-const bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
 
 declare module 'express-session' {
 	interface SessionData {

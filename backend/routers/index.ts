@@ -2,8 +2,8 @@ import express, { Request, Response, NextFunction } from 'express';
 import { loginRequest } from '../middleware/auth';
 import { createTable, insertUser, getUsers, getRooms, } from '../database/index';
 import * as db from '../database/index';
-import bcrypt from 'bcrypt';
-
+import session from 'express-session';
+const bcrypt = require("bcrypt");
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -14,13 +14,10 @@ router.get('/lobby', (req, res) => {
   res.render('lobby', { session: req.session });
 });
 
-router.get('/login', (req: Request, res: Response) => {
-  res.render('login', { session: req.session });
-});
-
-router.get('/register', (req: Request, res: Response) => {
+router.get('/register', (req, res) => {
   res.render('register', { session: req.session });
 });
+
 
 router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
@@ -35,7 +32,9 @@ router.post('/register', async (req, res) => {
   res.render('login', { session: req.session });
 });
 
-
+router.get('/login', (req: Request, res: Response) => {
+  res.render('login', { session: req.session });
+});
 router.post('/login', (req: Request, res: Response) => {
   loginRequest(req, res);
 });
@@ -195,6 +194,20 @@ router.post('/starting_game/:roomId', async (req: Request, res: Response) => {
   } else {
     res.status(401).json({ message: 'User not logged in' }); // 401 for unauthorized access
   }*/
+});
+
+router.post('/host_exit/:roomId', async (req: Request, res: Response) => {
+  const { userId, roomId } = req.body;
+  if(userId && roomId){
+    await db.removePlayerFromRoom(userId, roomId);
+    await db.deletePlayerStatus(userId, roomId);
+    await db.deleteRoom(roomId);
+  res.status(200).json({ message: 'Room Deleted' });
+  }else{
+    res.status(400).json({ message: 'Invalid user or room ID' });
+  
+  }
+
 });
 
 

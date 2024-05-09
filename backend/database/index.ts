@@ -369,7 +369,8 @@ async function updatePlayerStatus(player_id: number, room_id: number, status: bo
     const queryText = `UPDATE bingo_schema.player_ready_status SET status = $1 WHERE player_id = $2 AND room_id = $3;`;
     const queryParams = [status, player_id, room_id];
     await query(queryText, queryParams);
-    console.log("Player status updated successfully");
+    // console.log(`Player ${player_id} in ${room_id} changed status to "${status ? 'Ready': 'Not Ready'}" successfully`);
+    return status;
   } catch (error) {
     console.error("Error inserting user:", error);
     throw error;
