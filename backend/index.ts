@@ -1,28 +1,27 @@
 import dotenv from 'dotenv'
 dotenv.config() //{ path: './backend/database/config.env' }
 
-import express, { Request, Response, NextFunction } from 'express';
-import homeRouter from './routers';
-import path from 'path';
-import { Server } from 'socket.io';
-import { createServer } from 'node:http';
-import { sessionData, requiredLoginAllSites, loginRequest } from './middleware/auth';
-import { logger } from './middleware/logger'
+import express, {Request, Response, NextFunction} from 'express'
+import homeRouter from './routers'
+import path from 'path'
+import {Server} from 'socket.io'
+import {createServer} from 'node:http'
+import {sessionData, requiredLoginAllSites, loginRequest} from './middleware/auth'
+import {logger} from './middleware/logger'
 import * as db from './database/index'
 
-const app = express();
-const server = createServer(app);
-const io = new Server(server);
-
+const app = express()
+const server = createServer(app)
+const io = new Server(server)
 
 app.use(logger)
 app.use(sessionData)
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, '../frontend')));
-app.set('views', path.join(__dirname, 'views')).set('view engine', 'ejs');
-app.use(requiredLoginAllSites);
-app.use(express.json());
+app.use(express.urlencoded({extended: true}))
+app.use(express.static(path.join(__dirname, '../frontend')))
+app.set('views', path.join(__dirname, 'views')).set('view engine', 'ejs')
+app.use(requiredLoginAllSites)
+app.use(express.json())
 
 io.on('connection', (socket) => {
 	socket.on('join room', (roomId) => {
@@ -91,7 +90,17 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('starting game', (data) => {
-		io.to(data.roomId).emit('game started', {roomId: data.roomId})
+		io.to(data.roomId).emit('game started', {
+			roomId: data.roomId,
+		})
+	})
+
+	socket.on('generate random number', (data) => {
+		io.to(data.roomId).emit('number generated', {number: data.number})
+	})
+
+	socket.on('user marked number', (data) => {
+		io.to(data.roomId).emit('update card marked', {roomId: data.roomId, playerId: data.playerId, row: data.row, col: data.col, number: data.number, isMarked:data.isMarked})
 	})
 })
 

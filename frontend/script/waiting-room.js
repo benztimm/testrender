@@ -1,34 +1,33 @@
-const getByID = (id) => {return document.getElementById(id)}
-
-const createElement = (tag, attributes, id, content) => {
-    const element = document.createElement(tag);
-    for (const key in attributes) {
-        element.setAttribute(key, attributes[key]);
-    }
-    if (id) element.id = id;
-    if (content) element.textContent = content;
-    return element;
+const getByID = (id) => {
+	return document.getElementById(id)
 }
 
+const createElement = (tag, attributes, id, content) => {
+	const element = document.createElement(tag)
+	for (const key in attributes) {
+		element.setAttribute(key, attributes[key])
+	}
+	if (id) element.id = id
+	if (content) element.textContent = content
+	return element
+}
 
-
-/* Update color status on player change */ 
+/* Update color status on player change */
 const updateUserStatus = (userId, status) => {
-    const statusText = getByID(`status-${userId}`)
-    statusText.textContent = status ? 'Ready' : 'Not Ready';
-    
-    const buttonsStatus = getByID(`readyButton-${userId}`)
-    if (buttonsStatus) buttonsStatus.textContent = status ? 'Ready' : 'Not Ready';
-    
-    const statusColor = getByID(`status-color-${userId}`);
-    statusColor.style.backgroundColor = status ? 'rgb(181, 255, 69)' : 'rgb(255, 0, 0)';
+	const statusText = getByID(`status-${userId}`)
+	statusText.textContent = status ? 'Ready' : 'Not Ready'
+
+	const buttonsStatus = getByID(`readyButton-${userId}`)
+	if (buttonsStatus) buttonsStatus.textContent = status ? 'Ready' : 'Not Ready'
+
+	const statusColor = getByID(`status-color-${userId}`)
+	statusColor.style.backgroundColor = status ? 'rgb(181, 255, 69)' : 'rgb(255, 0, 0)'
 }
 
 socket.on('player ready', function (data) {
 	const {userId, status} = data
-	updateUserStatus(userId, status);
+	updateUserStatus(userId, status)
 })
-
 
 //OLD VERSION
 // socket.on('player ready', function (data) {
@@ -108,54 +107,57 @@ async function exitRoom(roomId, userId) {
 	window.location.href = '/lobby'
 }
 
-/* Create player element for new design */ 
+/* Create player element for new design */
 const createPlayerElement = (userId, username) => {
-    const cardPlayer = createElement('div', { class:'card'}, `player-${userId}`)
-    const faceTag = createElement('i', {class: 'fa-solid fa-face-smile'})
-    
-    const cardContent = createElement('div', {class: 'card-content'})
-    const playerTag = createElement('p', {class:'name'}, `username-${userId}`, username.toUpperCase())
-    cardContent.append(playerTag)
+	const cardPlayer = createElement('div', {class: 'card'}, `player-${userId}`)
+	const faceTag = createElement('i', {class: 'fa-solid fa-face-smile'})
 
-    const statusText = createElement('span', {class:'userStatus'}, `status-${userId}` , 'Not Ready')
-    const statusColor = createElement('span', {class:'statusColor', style:'background-color: rgb(255, 0, 0)'}, `status-color-${userId}`)
+	const cardContent = createElement('div', {class: 'card-content'})
+	const playerTag = createElement('p', {class: 'name'}, `username-${userId}`, username.toUpperCase())
+	cardContent.append(playerTag)
 
-    cardPlayer.append(faceTag, cardContent, statusText, statusColor)
-    return cardPlayer;
+	const statusText = createElement('span', {class: 'userStatus'}, `status-${userId}`, 'Not Ready')
+	const statusColor = createElement('span', {class: 'statusColor', style: 'background-color: rgb(255, 0, 0)'}, `status-color-${userId}`)
+
+	cardPlayer.append(faceTag, cardContent, statusText, statusColor)
+	return cardPlayer
 }
 
 // const createButtonForPlayer()
 
-
 function addPlayer(player, roomId, userId) {
-    const playerContainer = getByID('players')
+	const playerContainer = getByID('players')
 	let playerCard = getByID(`player-${userId}`)
 
 	if (!playerCard) {
-        playerCard = createPlayerElement(userId, player)
+		playerCard = createPlayerElement(userId, player)
 
-        const divStartAndExit = createElement('div', {class: 'actionBtn'})
-        if (userId === sessionUserId) {
+		const divStartAndExit = createElement('div', {class: 'actionBtn'})
+		if (userId === sessionUserId) {
 			const readyButton = createElement('button', {class: 'button ready'}, `readyButton-${userId}`, 'Not Ready')
-            readyButton.onclick = () => { markReady(roomId, userId) }
-            playerCard.append(readyButton)
-            
-            const exitButton = createElement('button', {class: 'exitButton'})
-            exitButton.onclick = () => { exitRoom(roomId, userId) }
+			readyButton.onclick = () => {
+				markReady(roomId, userId)
+			}
+			playerCard.append(readyButton)
+
+			const exitButton = createElement('button', {class: 'exitButton'})
+			exitButton.onclick = () => {
+				exitRoom(roomId, userId)
+			}
 			divStartAndExit.appendChild(exitButton)
-            playerCard.append(divStartAndExit)
+			playerCard.append(divStartAndExit)
 		}
-        
-        if (hostId === sessionUserId && userId !== sessionUserId) {
-			const kickButton = createElement('button', {class:'buttons kick'}, null, 'Kick')
+
+		if (hostId === sessionUserId && userId !== sessionUserId) {
+			const kickButton = createElement('button', {class: 'buttons kick'}, null, 'Kick')
 			kickButton.onclick = function () {
 				kick(roomId, userId)
 			}
 			playerCard.appendChild(kickButton)
 		}
-        playerContainer.appendChild(playerCard)
+		playerContainer.appendChild(playerCard)
 
-        /*
+		/*
         // playerCard = document.createElement('div')
 		// playerCard.className = 'player'
 		// playerCard.id = `player-${userId}`
@@ -175,8 +177,8 @@ function addPlayer(player, roomId, userId) {
 		// playerInfo.appendChild(statusSpan)
 
 		// playerCard.appendChild(playerInfo)
-        */ 
-		
+        */
+
 		// Create buttons for the current session user
 		// if (userId === sessionUserId) {
 		// 	// Assuming sessionUserId is globally defined

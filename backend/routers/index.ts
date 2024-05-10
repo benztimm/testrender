@@ -2,11 +2,11 @@ import express, { Request, Response, NextFunction } from 'express';
 import { loginRequest } from '../middleware/auth';
 import { createTable, insertUser, getUsers, getRooms, } from '../database/index';
 import * as db from '../database/index';
-import session from 'express-session';
-const bcrypt = require("bcrypt");
+import bcrypt from 'bcrypt';
+
 const router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   res.render('index', { session: req.session });
 });
 
@@ -14,10 +14,13 @@ router.get('/lobby', (req, res) => {
   res.render('lobby', { session: req.session });
 });
 
-router.get('/register', (req, res) => {
-  res.render('register', { session: req.session });
+router.get('/login', (req: Request, res: Response) => {
+  res.render('login', { session: req.session });
 });
 
+router.get('/register', (req: Request, res: Response) => {
+  res.render('register', { session: req.session });
+});
 
 router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
@@ -32,9 +35,7 @@ router.post('/register', async (req, res) => {
   res.render('login', { session: req.session });
 });
 
-router.get('/login', (req: Request, res: Response) => {
-  res.render('login', { session: req.session });
-});
+
 router.post('/login', (req: Request, res: Response) => {
   loginRequest(req, res);
 });
@@ -151,7 +152,31 @@ router.get('/game', async (req, res) => {
 router.get('/game/:roomId', async (req, res) => {
   const roomId = req.params.roomId;
   try {
-    res.send(`Game room ${roomId}`)
+    const rawData = await db.getGameInfo(parseInt(roomId));
+     //const getDrawnBalls = await db.getDrawnBalls(roomId);
+     
+     const gameInfo = {
+         room_id: rawData[0].room_id,
+         host_id: rawData[0].host_id,
+         players: rawData.map(player => ({
+             user_id: player.user_id,
+             username: player.username,
+             card_id: player.card_id,
+             card_data: player.card_data,
+         }))
+
+         //drawn_balls: getDrawnBalls
+     };
+
+     const host = rawData.find(player => player.host_id === player.user_id);
+     res.render('game', {
+       gameInfo: gameInfo,
+       players: gameInfo.players,
+       host: host,
+       user: req.session.user, // Assuming session management
+       session: req.session
+     });
+
   } catch (error) {
     console.error('Failed to load game room', error);
     res.status(500).send('Internal Server Error');
@@ -160,15 +185,26 @@ router.get('/game/:roomId', async (req, res) => {
 
 router.post('/starting_game/:roomId', async (req: Request, res: Response) => {
   const { host_id, players, room_id } = req.body;
+  await db.deleteOldCards(room_id);
+  await db.deleteStartTime(room_id)
+
+  console.log(host_id, players, room_id)
+  
+  // ONLY INSERT CARDS BASE ON NUMBER OF USERs
   const cardCollection = await db.insertFourCard();
+
   if (Array.isArray(cardCollection) && cardCollection.length >= players.length) {
     for (let i = 0; i < players.length; i++) {
       await db.assignCardToPlayer(players[i], cardCollection[i].card_id, room_id);
     }
+    await db.insertStartTime(room_id);
     res.status(200).json({ message: 'Game started' });
   } else {
     res.status(400).json({ message: 'Invalid players or card collection' });
   }
+
+  
+
   /*
   if (req.session.user) {
     const player_id = await db.getUserIdByUsername(req.session.user.username);
