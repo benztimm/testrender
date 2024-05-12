@@ -91,6 +91,9 @@
 				const hostId = '<%= gameInfo.host_id %>'
 				const userName = '<%= session.user.username %>'
 				const startTime = '<%= gameInfo.start_time %>'; // Adjust format as needed
+				const drawn_number_length = '<%= gameInfo.drawn_number.length %>'
+				const drawnNumbers = '<%= gameInfo.drawn_number %>'.split(', ').map(Number);
+
 			</script>
 
 			<script src="/script/game.js"></script>

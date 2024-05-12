@@ -7,20 +7,9 @@ const createElement = (tag, attributes, id, content) => {
 	if (content) element.textContent = content
 	return element
 }
-/*
-const calledNumbers = []
-function generateRandomNumber() {
-	let number = Math.floor(Math.random() * 75) + 1
-	while (calledNumbers.includes(number)) {
-		number = Math.floor(Math.random() * 75) + 1
-	}
-	calledNumbers.push(number)
-	return number
-}
-*/
 const totalNumbers = 75
-const calledNumbers = Array.from({length: totalNumbers}, (_, i) => i + 1)
-
+const deck = Array.from({length: totalNumbers}, (_, i) => i + 1)
+const calledNumbers = deck.filter((number) => !drawnNumbers.includes(number))
 // Function to shuffle an array
 function shuffle(array) {
 	for (let i = array.length - 1; i > 0; i--) {
