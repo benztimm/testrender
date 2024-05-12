@@ -103,7 +103,12 @@ io.on('connection', (socket) => {
 	})
 
 
-	socket.on('user marked number', (data) => {
+	socket.on('user marked number', async(data) => {
+		if (data.isMarked) {
+			await db.deleteMarkedNumber(data.playerId, data.roomId, data.cell_id)
+		} else {
+			await db.insertMarkedNumber(data.playerId, data.roomId, data.cell_id)
+		}
 		io.to(data.roomId).emit('update card marked', { roomId: data.roomId, playerId: data.playerId, row: data.row, col: data.col, number: data.number, isMarked: data.isMarked })
 	})
 	socket.on('check won', async (data) => {
@@ -112,7 +117,6 @@ io.on('connection', (socket) => {
 		const drawn_numbers = await db.getDrawnNumber(data.room_id)
 		const calledNumber = drawn_numbers.map((result) => result.drawn_number);
 		const win = card.checkForWin(playerCard, calledNumber)
-		console.log(win)
 		if (win) {
 			io.to(data.room_id).emit('player won', { roomId: data.room_id, playerId: data.user_id, playerUsername: data.user_name})
 		} else {

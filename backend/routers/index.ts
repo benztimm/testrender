@@ -155,6 +155,7 @@ router.get('/game/:roomId', async (req, res) => {
     const startTime = await db.getStartTime(parseInt(roomId));
     const rawData = await db.getGameInfo(parseInt(roomId));
     const drawnNumber = await db.getDrawnNumber(parseInt(roomId));
+    const markedNumber = await db.getMarkedCells(parseInt(roomId));
      //const getDrawnBalls = await db.getDrawnBalls(roomId);
      
      const gameInfo = {
@@ -168,6 +169,7 @@ router.get('/game/:roomId', async (req, res) => {
          })),
           start_time: startTime,
           drawn_number: drawnNumber.map((result) => result.drawn_number).filter((value) => value !== 0).join(', '),
+          markedCells: markedNumber.map((result) => result.div_cell_id)
      };
 
      const host = rawData.find(player => player.host_id === player.user_id);

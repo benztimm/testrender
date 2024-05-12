@@ -561,16 +561,50 @@ async function deleteDrawnNumber(roomId: number) {
 }
 
 async function getStartTime(room_id: number) {
-    try {
-        const status = await query(
-          `select * from bingo_schema.room_timer where room_id = $1`,
-          [room_id]
-        );
-        return status.rows[0].timestamp;
-      } catch (error) {
-        console.error("Error inserting user:", error);
-        throw error;
-      }
+	try {
+		const status = await query(
+			`select * from bingo_schema.room_timer where room_id = $1`,
+			[room_id]
+		);
+		return status.rows[0].timestamp;
+	} catch (error) {
+		console.error("Error inserting user:", error);
+		throw error;
+	}
+}
+async function insertMarkedNumber(user_id: Number, room_id: Number, div_cell_id: String) {
+	try {
+
+		const queryText = 'INSERT INTO bingo_schema.marked_cells_table(room_id, user_id, div_cell_id)VALUES ($1, $2, $3);';
+		const queryParams = [room_id, user_id, div_cell_id];
+		await query(queryText, queryParams);
+		console.log('Marked cell inserted successfully!');
+	} catch (error) {
+		console.error('Error inserting room:', error);
+		throw error;
+	}
+}
+async function deleteMarkedNumber(user_id: Number, room_id: Number, div_cell_id: String) {
+	try {
+		const queryText = 'DELETE FROM bingo_schema.marked_cells_table WHERE user_id = $1 AND room_id = $2 AND div_cell_id = $3;';
+		const queryParams = [user_id, room_id, div_cell_id];
+		await query(queryText, queryParams);
+		console.log('Marked cell deleted successfully!');
+	} catch (error) {
+		console.error('Error inserting room:', error);
+		throw error;
+	}
+}
+async function getMarkedCells(room_id: Number) {
+	try {
+		const markedCellsInfo = await query(`
+	  SELECT room_id, user_id, div_cell_id FROM bingo_schema.marked_cells_table WHERE room_id = $1;
+	  `, [room_id]);
+		return markedCellsInfo.rows;
+	} catch (error) {
+		console.error("Error fetching marked cells:", error);
+		throw error;
+	}
 }
 
 // async function createTableTimer(): Promise<void> {
@@ -626,4 +660,7 @@ export {
 	deleteDrawnNumber,
 	resetPlayerStatus,
 	getStartTime,
+	insertMarkedNumber,
+	deleteMarkedNumber,
+	getMarkedCells,
 }

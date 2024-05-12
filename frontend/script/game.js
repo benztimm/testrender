@@ -103,8 +103,9 @@ window.onload = function () {
 
 function markNumber(cell) {
 	const [playerId, row, col, number] = cell.id.split('-');
+	const cell_id = cell.id
 	const isMarked = cell.classList.contains("marked");
-	socket.emit('user marked number', { roomId, playerId, row, col, number, isMarked  })
+	socket.emit('user marked number', { roomId, playerId, row, col, number, isMarked, cell_id })
 	
 }
 
@@ -115,9 +116,7 @@ socket.on('update card marked', function (data) {
 
 
 function checkWon(user_id, room_id) {
-	console.log(user_id + ' '+room_id)
 	socket.emit('check won', { user_id: user_id, room_id: room_id, user_name: userName })
-	console.log('check won')
 }
 
 socket.on('player won', function (data) {
