@@ -1,43 +1,4 @@
-<style>
-	.chat-container {
-		position: fixed;
-		display: block;
-		bottom: 40px;
-		left: 0;
-		max-width: 700px;
-		width: 300px;
-		height: 10%;
-		background: linear-gradient(to top, rgb(255, 187, 0), rgb(255, 119, 0));
-		border-radius: 10px;
-	}
-
-	.chat-area {
-		color: rgb(255, 255, 255);
-		height: 100%;
-		overflow-y: scroll;
-		overflow-x: hidden;
-		font-size: 12px;
-	}
-	#messages > p {
-		font-size: 14px;
-		margin: 15px;
-	}
-
-	.chat-form {
-		display: flex;
-	}
-
-	.chat-form > input {
-		flex: 1;
-		font-size: 14px;
-		border-radius: 10px;
-		padding: 10px;
-		border-color: aqua;
-		border-width: 1px;
-	}
-</style>
-
-<div class="chat-container">
+<div class="chat-container inactive" id="chat-container">
 	<div id="messages" class="chat-area">
 		<!-- Chat messages will be displayed here -->
 	</div>
@@ -54,7 +15,7 @@
 	const input = document.getElementById('input')
 	const messages = document.getElementById('messages')
 	const user = "<%= session.user ? session.user['username'] : 'Guest' %>"
-	const roomId = '<%= roomId %>' // This assumes you pass `roomId` when rendering the EJS
+	const roomId = '<%= locals.roomId %>' // This assumes you pass `roomId` when rendering the EJS
 
 	socket.emit('join room', roomId) // Joining a specific room
 
@@ -74,4 +35,12 @@
 			messages.appendChild(item)
 		}
 	})
+
+	const chatButton = document.getElementById('chatButton');
+	const chatArea = document.getElementById('chat-container');
+	chatButton.onclick = _ => {
+		chatArea.classList.toggle('inactive')
+	}
+	
+	
 </script>

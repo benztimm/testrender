@@ -238,12 +238,12 @@ p{
 
 
 footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
+    /* position: fixed; */
+    /* bottom: 0;
+    left: 0; */
     width: 100%;
     background-color: #000;
-    color: #695f5f;
+    color: aliceblue;
     padding: 10px;
     text-align: center;
     
@@ -251,3 +251,53 @@ footer {
 
 
 
+.chat-container {
+    position: fixed;
+    display: block;
+    bottom: 40px;
+    left: 0;
+    max-width: 700px;
+    width: 300px;
+    height: 200px;
+    background: linear-gradient(to top, rgb(255, 187, 0), rgb(255, 119, 0));
+    border-radius: 10px;
+    animation: slide ease 0.5s;
+}
+
+.chat-area {
+    color: rgb(255, 255, 255);
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    font-size: 12px;
+}
+#messages > p {
+    font-size: 14px;
+    margin: 15px;
+}
+
+.chat-form {
+    display: flex;
+}
+
+.chat-form > input {
+    flex: 1;
+    font-size: 14px;
+    border-radius: 10px;
+    padding: 10px;
+    border-color: aqua;
+    border-width: 1px;
+}
+
+.inactive {
+    display: none;
+}
+
+@keyframes slide {
+    from {
+        bottom: -200px;
+    }
+    to {
+        bottom: 40px;
+    }
+}

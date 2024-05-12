@@ -17,7 +17,7 @@ body {
 }
 
 .cta-button-rg {
-	background-color: #5082ff69;
+	background: linear-gradient(to top, rgba(255, 187, 0,0.5), rgba(255, 119, 0,0.7));
 	color: white;
 	margin: 20px;
 	padding: 12px 24px;
@@ -27,12 +27,16 @@ body {
 }
 
 .cta-button-rg:hover {
-	background-color: rgb(130, 126, 235);
+	background: linear-gradient(to top, rgb(255, 187, 0), rgb(255, 119, 0));
 }
 
 .cta-button-signin {
 	text-decoration: none;
 	color: white;
+}
+
+.cta-button-signin:hover {
+	text-decoration: underline;
 }
 
 .cta-button-signin:hover {

@@ -147,7 +147,7 @@ section {
 }
 
 .marked {
-	background-color: rgb(57, 57, 255);
+	background: linear-gradient(to top, rgb(255, 187, 0), rgb(255, 119, 0));
 	color: aliceblue;
 }
 
