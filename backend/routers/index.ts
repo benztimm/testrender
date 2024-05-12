@@ -152,7 +152,9 @@ router.get('/game', async (req, res) => {
 router.get('/game/:roomId', async (req, res) => {
   const roomId = req.params.roomId;
   try {
+    const startTime = await db.getStartTime(parseInt(roomId));
     const rawData = await db.getGameInfo(parseInt(roomId));
+    const drawnNumber = await db.getDrawnNumber(parseInt(roomId));
      //const getDrawnBalls = await db.getDrawnBalls(roomId);
      
      const gameInfo = {
@@ -163,9 +165,9 @@ router.get('/game/:roomId', async (req, res) => {
              username: player.username,
              card_id: player.card_id,
              card_data: player.card_data,
-         }))
-
-         //drawn_balls: getDrawnBalls
+         })),
+          start_time: startTime,
+          drawn_number: drawnNumber.map((result) => result.drawn_number).filter((value) => value !== 0).join(', '),
      };
 
      const host = rawData.find(player => player.host_id === player.user_id);
@@ -187,11 +189,13 @@ router.post('/starting_game/:roomId', async (req: Request, res: Response) => {
   const { host_id, players, room_id } = req.body;
   await db.deleteOldCards(room_id);
   await db.deleteStartTime(room_id)
+  await db.deleteDrawnNumber(room_id)
+  await db.insertDrawnNumber(room_id, 0)
 
   console.log(host_id, players, room_id)
   
   // ONLY INSERT CARDS BASE ON NUMBER OF USERs
-  const cardCollection = await db.insertFourCard();
+  const cardCollection = await db.insertNumCard(room_id)
 
   if (Array.isArray(cardCollection) && cardCollection.length >= players.length) {
     for (let i = 0; i < players.length; i++) {

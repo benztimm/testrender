@@ -1,10 +1,11 @@
-import {Pool, PoolConfig, QueryResult} from 'pg'
+import { Pool, PoolConfig, QueryResult } from 'pg'
 import * as card from '../middleware/card'
 const result = require('dotenv').config()
 
 if (result.error) {
 	console.error(result.error)
 }
+
 const dbConfig: PoolConfig = {
 	user: process.env.POSTGRE_ID,
 	password: process.env.POSTGRE_PASS,
@@ -300,6 +301,34 @@ async function insertFourCard() {
 	}
 }
 
+async function insertNumCard(room_id: number) {
+	try {
+		const countResult = await query(
+			`SELECT COUNT(*) as count FROM bingo_schema.player_ready_status WHERE room_id = $1`,
+			[room_id]
+		);
+		const playerCount = parseInt(countResult.rows[0].count);
+		const collection: number[][][] = []
+		for (let i = 0; i < playerCount; i++) {
+			collection.push(card.generateCard())
+		}
+		const values = collection.map((card, index) => `($${index + 1})`).join(", ");
+		const queryParams = collection.map(card => JSON.stringify(card));
+		const queryText = `
+	  		INSERT INTO bingo_schema.cards_table (card_data)
+	  		VALUES ${values}
+	  		RETURNING card_id, card_data;
+  `;
+		// Execute the insertion query
+		const result = await query(queryText, queryParams);
+		console.log(`${playerCount} cards inserted successfully`);
+		return result.rows;
+	} catch (error) {
+		console.error('Error inserting cards:', error);
+		throw error;
+	}
+}
+
 async function assignCardToPlayer(player_id: number, card_id: number, room_id: number) {
 	try {
 		const queryText = `INSERT INTO bingo_schema.player_card(player_id, card_id, room_id)VALUES ($1, $2, $3);`
@@ -341,6 +370,17 @@ async function updatePlayerStatus(player_id: number, room_id: number, status: bo
 		await query(queryText, queryParams)
 		// console.log(`Player ${player_id} in ${room_id} changed status to "${status ? 'Ready': 'Not Ready'}" successfully`);
 		return status
+	} catch (error) {
+		console.error('Error inserting user:', error)
+		throw error
+	}
+}
+async function resetPlayerStatus(room_id: number) {
+	try {
+		const queryText = `UPDATE bingo_schema.player_ready_status SET status = false WHERE room_id = $1;`
+		const queryParams = [room_id]
+		await query(queryText, queryParams)
+		console.log('Player status reset successfully')
 	} catch (error) {
 		console.error('Error inserting user:', error)
 		throw error
@@ -409,21 +449,25 @@ async function getGameInfo(room_id: Number) {
 
 async function deleteOldCards(roomId: number) {
 	try {
-		const allCards = `SELECT * FROM bingo_schema.cards_table`
-		const result = await query(allCards, undefined!);
-		// console.log(result.rows)
+		const selectQuery = `SELECT card_id FROM bingo_schema.player_card WHERE room_id = $1`
+		const selectParams = [roomId]
+		const result = await query(selectQuery, selectParams)
 
-		const disconnectCardVsPlayer = `DELETE FROM bingo_schema.cards_table`
-		await query(disconnectCardVsPlayer, undefined!)
+		const queryText = `DELETE FROM bingo_schema.player_card
+		WHERE room_id = $1`
+		const queryParams = [roomId]
+		await query(queryText, queryParams)
 
-		// const queryText = `DELETE FROM bingo_schema.cards_table
-		// 				WHERE card_id IN (
-		// 				SELECT card_id
-		// 				FROM bingo_schema.player_card
-		// 				WHERE room_id = $1
-		// 			);`
-		// await query(queryText, [roomId])
-		// console.log(result)
+		if (result) {
+			result.rows.forEach(async (row: any) => {
+				console.log(row)
+				const queryText = `DELETE FROM bingo_schema.cards_table WHERE card_id = $1`
+				const queryParams = [row.card_id]
+				await query(queryText, queryParams)
+				console.log('Cards deleted successfully')
+			})
+		}
+
 		console.log('Cards deleted successfully')
 	} catch (error) {
 		console.error('Error deleting room:', error)
@@ -436,7 +480,7 @@ async function insertStartTime(roomId: number) {
 		// createTableTimer();
 		// const currentTime = new Date()
 		// const endTime = new Date(currentTime.getTime() + 10 * 60 * 1000)
-		
+
 		const queryText = 'INSERT INTO bingo_schema.room_timer (room_id) VALUES ($1)';
 		const queryParams = [roomId];
 		await query(queryText, queryParams)
@@ -451,7 +495,7 @@ async function deleteStartTime(roomId: number) {
 		// createTableTimer();
 		// const currentTime = new Date()
 		// const endTime = new Date(currentTime.getTime() + 10 * 60 * 1000)
-		
+
 		const queryText = 'DELETE FROM bingo_schema.room_timer WHERE room_id = $1';
 		const queryParams = [roomId];
 
@@ -460,6 +504,73 @@ async function deleteStartTime(roomId: number) {
 	} catch (error) {
 		console.error('Error inserting time:', error)
 	}
+}
+
+async function getCardByPlayer(player_id: number, room_id: number) {
+	try {
+
+		const queryText = `
+		select * from bingo_schema.player_card as p
+		join bingo_schema."cards_table" as c
+		on p.card_id = c.card_id
+		where p.room_id = $1 and p.player_id = $2
+`
+		const queryParams = [room_id, player_id]
+		const result = await query(queryText, queryParams)
+		return result.rows[0].card_data
+	} catch (error) {
+		console.error('Error inserting user:', error)
+		throw error
+	}
+}
+
+
+async function getDrawnNumber(roomId: number) {
+	try {
+		const queryText = `SELECT * FROM bingo_schema.drawn_numbers WHERE room_id = $1`
+		const queryParams = [roomId]
+		const result = await query(queryText, queryParams)
+		return result.rows
+	} catch (error) {
+		console.error('Error inserting user:', error)
+		throw error
+	}
+}
+
+async function insertDrawnNumber(roomId: number, number: number) {
+	try {
+		const queryText = `INSERT INTO bingo_schema.drawn_numbers (room_id, drawn_number) VALUES ($1, $2)`
+		const queryParams = [roomId, number]
+		await query(queryText, queryParams)
+		console.log('Number inserted successfully')
+	} catch (error) {
+		console.error('Error inserting user:', error)
+		throw error
+	}
+}
+async function deleteDrawnNumber(roomId: number) {
+	try {
+		const queryText = `DELETE FROM bingo_schema.drawn_numbers WHERE room_id = $1`
+		const queryParams = [roomId]
+		await query(queryText, queryParams)
+		console.log('Number deleted successfully')
+	} catch (error) {
+		console.error('Error inserting user:', error)
+		throw error
+	}
+}
+
+async function getStartTime(room_id: number) {
+    try {
+        const status = await query(
+          `select * from bingo_schema.room_timer where room_id = $1`,
+          [room_id]
+        );
+        return status.rows[0].timestamp;
+      } catch (error) {
+        console.error("Error inserting user:", error);
+        throw error;
+      }
 }
 
 // async function createTableTimer(): Promise<void> {
@@ -507,5 +618,12 @@ export {
 	getGameInfo,
 	deleteOldCards,
 	insertStartTime,
-	deleteStartTime
+	deleteStartTime,
+	insertNumCard,
+	getCardByPlayer,
+	getDrawnNumber,
+	insertDrawnNumber,
+	deleteDrawnNumber,
+	resetPlayerStatus,
+	getStartTime,
 }
