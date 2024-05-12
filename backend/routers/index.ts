@@ -193,9 +193,7 @@ router.post('/starting_game/:roomId', async (req: Request, res: Response) => {
   await db.deleteStartTime(room_id)
   await db.deleteDrawnNumber(room_id)
   await db.insertDrawnNumber(room_id, 0)
-
-  console.log(host_id, players, room_id)
-  
+    
   // ONLY INSERT CARDS BASE ON NUMBER OF USERs
   const cardCollection = await db.insertNumCard(room_id)
 

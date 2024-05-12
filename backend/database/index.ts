@@ -460,7 +460,6 @@ async function deleteOldCards(roomId: number) {
 
 		if (result) {
 			result.rows.forEach(async (row: any) => {
-				console.log(row)
 				const queryText = `DELETE FROM bingo_schema.cards_table WHERE card_id = $1`
 				const queryParams = [row.card_id]
 				await query(queryText, queryParams)
@@ -595,6 +594,18 @@ async function deleteMarkedNumber(user_id: Number, room_id: Number, div_cell_id:
 		throw error;
 	}
 }
+async function deleteAllMarkedNumber(room_id: Number) {
+	try {
+		const queryText = 'DELETE FROM bingo_schema.marked_cells_table WHERE room_id = $1;';
+		const queryParams = [room_id];
+		await query(queryText, queryParams);
+		console.log('Marked cell deleted successfully!');
+	} catch (error) {
+		console.error('Error inserting room:', error);
+		throw error;
+	}
+}
+
 async function getMarkedCells(room_id: Number) {
 	try {
 		const markedCellsInfo = await query(`
@@ -663,4 +674,5 @@ export {
 	insertMarkedNumber,
 	deleteMarkedNumber,
 	getMarkedCells,
+	deleteAllMarkedNumber
 }

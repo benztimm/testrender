@@ -131,6 +131,7 @@ io.on('connection', (socket) => {
 		await db.deleteDrawnNumber(data.roomId)
 		await db.insertDrawnNumber(data.roomId, 0)
 		await db.resetPlayerStatus(data.roomId)
+		await db.deleteAllMarkedNumber(data.roomId)
 		io.to(data.roomId).emit('finished cleanup', { roomId: data.roomId})
 	})
 })
