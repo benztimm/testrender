@@ -36,13 +36,13 @@
 								<div class="bingo-row">
 									<% for (let col=0; col < player.card_data[row].length; col++) { %>
 										<% 
-										const cellId = player.user_id + '-' + row + '-' + col + '-' + player.card_data[row][col];
+										const cellId = player.user_id + '-' + col + '-' + row + '-' + player.card_data[col][row];
 										const cellClass = gameInfo.markedCells.includes(cellId) ? "bingo-cell marked" : "bingo-cell";
 										%>
 										<div class="<%= cellClass %>"
 											 id="<%= cellId %>"
 											 onclick="markNumber(this)">
-											<%= player.card_data[row][col]===0 ? "Free" : player.card_data[row][col] %>
+											<%= player.card_data[col][row]===0 ? "Free" : player.card_data[col][row] %>
 										</div>
 									<% } %>
 								</div>
@@ -58,11 +58,11 @@
 									<div class="bingo-row">
 										<% for (let col=0; col < player.card_data[row].length; col++) { %>
 											<% 
-											const cellId = player.user_id + '-' + row + '-' + col + '-' + player.card_data[row][col];
+											const cellId = player.user_id + '-' + col + '-' + row + '-' + player.card_data[col][row];
 											const cellClass = gameInfo.markedCells.includes(cellId) ? "bingo-cell marked" : "bingo-cell";
 											%>
 											<div class="<%= cellClass %>"
-												id="<%= player.user_id + '-' + row + '-' + col + '-' + player.card_data[row][col] %>">
+												id="<%= player.user_id + '-' + col + '-' + row + '-' + player.card_data[col][row] %>">
 											</div>
 											<% } %>
 									</div>

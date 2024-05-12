@@ -58,7 +58,7 @@ function callNumber() {
 				number: number,
 			})
 		}
-	}, 2000)
+	}, 1000)
 }
 
 
@@ -92,7 +92,7 @@ function startSynchronizedTimer(startTime, maxDuration, display) {
 }
 
 window.onload = function () {
-    const maxGameTime = 8.74; // Maximum game time in minutes
+    const maxGameTime = 10; // Maximum game time in minutes
     var display = document.querySelector('#timer');
     startSynchronizedTimer(startTime, maxGameTime, display);
 	if (userId == hostId){
