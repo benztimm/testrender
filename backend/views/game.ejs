@@ -16,19 +16,27 @@
 	<%- include('partials/menu') %>
 
 		<h1>Bingo Game</h1>
-		<div id="boss"></div>
+		<div class="container-boss">
+			<div id="boss" class="dynamic-ball"></div>
+		</div>
+
 		<div id="timer"></div>
 		<% if (gameInfo.drawn_number && gameInfo.drawn_number.length > 0) { %>
-			<div id="called-numbers"><%= gameInfo.drawn_number + ', ' %></div>
+			<div id="called-numbers">
+				<% for( const number of gameInfo.drawn_number.split(', ') ) { %>
+					<div class="ball"><%= number %></div>
+				<% } %>
+			</div>
+			
 		<% } else { %>
 			<div id="called-numbers"></div>
 		<% } %>
+
 		<div id="players">
 			<section>
 				<% for (let player of gameInfo.players) { %>
 					<% if (session.user.userId===player.user_id) { %>
-						<button class="startButton" id="bingoButton"
-							onclick="checkWon('<%= player.user_id %>','<%= gameInfo.room_id %>')">Bingo</button>
+						
 						<div class="bingo-card" id="player<%= player.user_id %>">
 							<h2>Player <%= player.username %>
 							</h2>
@@ -69,8 +77,11 @@
 									<% } %>
 							</div>
 							<% } %>
-								<% } %>
+						<% } %>
+					
 			</section>
+			<button class="startButton" id="bingoButton"
+							onclick="checkWon('<%= session.user.userId %>','<%= gameInfo.room_id %>')">Bingo</button>
 		</div>
 
 		<%- include('partials/chat', { session: session, roomId: gameInfo.room_id }) %>
