@@ -45,11 +45,12 @@
 									<% for (let col=0; col < player.card_data[row].length; col++) { %>
 										<% 
 										const cellId = player.user_id + '-' + col + '-' + row + '-' + player.card_data[col][row];
-										const cellClass = gameInfo.markedCells.includes(cellId) ? "bingo-cell marked" : "bingo-cell";
+										const isMidCell = row == 2 && col == 2;  // Check if it's the special cell
+										const cellClass = gameInfo.markedCells.includes(cellId) || isMidCell ? "bingo-cell marked" : "bingo-cell";
 										%>
 										<div class="<%= cellClass %>"
 											 id="<%= cellId %>"
-											 onclick="markNumber(this)">
+											 <% if (!isMidCell) { %>onclick="markNumber(this)"<% } %>>
 											<%= player.card_data[col][row]===0 ? "Free" : player.card_data[col][row] %>
 										</div>
 									<% } %>
@@ -67,7 +68,7 @@
 										<% for (let col=0; col < player.card_data[row].length; col++) { %>
 											<% 
 											const cellId = player.user_id + '-' + col + '-' + row + '-' + player.card_data[col][row];
-											const cellClass = gameInfo.markedCells.includes(cellId) ? "bingo-cell marked" : "bingo-cell";
+											const cellClass = gameInfo.markedCells.includes(cellId) || (row == 2 && col == 2) ? "bingo-cell marked" : "bingo-cell";
 											%>
 											<div class="<%= cellClass %>"
 												id="<%= player.user_id + '-' + col + '-' + row + '-' + player.card_data[col][row] %>">
