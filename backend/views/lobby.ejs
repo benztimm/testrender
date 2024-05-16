@@ -42,7 +42,7 @@
         </table>
         </div>
     </section>
-    <%- include('partials/chat', { session: session }) %>
+    <%- include('partials/chat', { session: session, roomId: 'lobby' }) %>
     <script>
         const user_name = '<%= session.user.username %>';
     </script>
