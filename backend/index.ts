@@ -87,8 +87,9 @@ io.on('connection', (socket) => {
 		// Update database or manage internal state as necessary
 	})
 	socket.on('new player joined', async (data) => {
-		const user_id = await db.getUserIdByUsername(data.user)
-		io.to(data.roomId).emit('new player joined', {
+		const {user, roomId} = data
+		const user_id = await db.getUserIdByUsername(user)
+		io.to(String(roomId)).emit('new player joined', {
 			username: data.user,
 			roomId: data.roomId,
 			userId: user_id,
