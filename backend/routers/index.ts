@@ -1,5 +1,5 @@
 import express, {Request, Response, NextFunction} from 'express'
-import {loginRequest,isUserExist} from '../middleware/auth'
+import {loginRequest,isUserExist,isUserExistAndGameStarted} from '../middleware/auth'
 import {createTable, insertUser, getUsers, getRooms} from '../database/index'
 import * as db from '../database/index'
 import bcrypt from 'bcrypt'
@@ -144,7 +144,7 @@ router.get('/game', async (req, res) => {
 	res.render('game')
 })
 
-router.get('/game/:roomId', async (req, res) => {
+router.get('/game/:roomId',isUserExistAndGameStarted, async (req, res) => {
 	const roomId = req.params.roomId
 	try {
 		const startTime = await db.getStartTime(parseInt(roomId))

@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express'
 import session from 'express-session'
-import { getUserData, getUsers,getUserIdByUsername, getPlayerInRoom } from '../database';
+import { getUserData, getUsers,getUserIdByUsername, getPlayerInRoom,getRoomDetail } from '../database';
 import bcrypt from "bcrypt";
 
 declare module 'express-session' {
@@ -77,5 +77,20 @@ const isUserExist = async (req: Request, res: Response, next: NextFunction) => {
 	next();
 }
 
+const isUserExistAndGameStarted = async (req: Request, res: Response, next: NextFunction) => {
+	const roomId = req.params.roomId
+	const player = await getPlayerInRoom(parseInt(roomId))
+	const found = player.find((player) => player.user_id == req.session.user?.userId)
+	
+	const roomDetail = await getRoomDetail(parseInt(roomId))
+	console.log(roomDetail)
+	const gameStarted = roomDetail.status
+	if(!found||!gameStarted) {
+		res.status(403).render('status403')
+		return
+	}
+	next();
 
-export { sessionData, requiredLoginAllSites, loginRequest ,isUserExist}
+}
+
+export { sessionData, requiredLoginAllSites, loginRequest ,isUserExist,isUserExistAndGameStarted}
