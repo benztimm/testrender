@@ -94,10 +94,21 @@ async function getUserIdByUsername(username: string) {
 	}
 }
 
-async function createRoom(roomName: string, host: string) {
+async function RoomNameOrHostExist(roomName: string, host: string) {
 	try {
-		const queryText = 'INSERT INTO bingo_schema."Rooms" (room_name, host) VALUES ($1, $2)'
+		const queryText = 'SELECT * FROM bingo_schema."Rooms" WHERE room_name = $1 or host = $2'
 		const queryParams = [roomName, host]
+		return (await query(queryText, queryParams)).rows
+	} catch (error) {
+		console.error('Error inserting room:', error)
+		throw error
+	}
+}
+
+async function createRoom(roomName: string, host: string, status: boolean) {
+	try {
+		const queryText = 'INSERT INTO bingo_schema."Rooms" (room_name, host, status) VALUES ($1, $2, $3)'
+		const queryParams = [roomName, host, false]
 		await query(queryText, queryParams)
 		console.log('Room inserted successfully')
 	} catch (error) {
@@ -251,24 +262,23 @@ async function getCard(card_id: number) {
 
 async function getRoomDetails(room_id: Number) {
 	try {
-		const room = await query(
-			`
-    SELECT 
-    r.room_id, 
-    r.room_name, 
-    p.user_id, 
-    host.user_id as host_id,
-	  u.username
-    FROM 
-      bingo_schema."Rooms" AS r
-    JOIN 
-      bingo_schema.room_player_table AS p ON r.room_id = p.room_id
-    JOIN 
-      bingo_schema."Users" AS host ON r.host = host.username
-    JOIN 
-      bingo_schema."Users" AS u ON p.user_id = u.user_id
-    where
-    	r.room_id = $1;
+		const room = await query(`
+			SELECT 
+			r.room_id, 
+			r.room_name,
+			p.user_id,
+			host.user_id as host_id,
+			u.username
+			FROM 
+			bingo_schema."Rooms" AS r
+			JOIN 
+			bingo_schema.room_player_table AS p ON r.room_id = p.room_id
+			JOIN 
+			bingo_schema."Users" AS host ON r.host = host.username
+			JOIN 
+			bingo_schema."Users" AS u ON p.user_id = u.user_id
+			where
+				r.room_id = $1;
     `,
 			[room_id]
 		)
@@ -547,6 +557,7 @@ async function insertDrawnNumber(roomId: number, number: number) {
 		throw error
 	}
 }
+
 async function deleteDrawnNumber(roomId: number) {
 	try {
 		const queryText = `DELETE FROM bingo_schema.drawn_numbers WHERE room_id = $1`
@@ -556,6 +567,18 @@ async function deleteDrawnNumber(roomId: number) {
 	} catch (error) {
 		console.error('Error inserting user:', error)
 		throw error
+	}
+}
+
+async function updateRoomStatus(room_id:number, status:boolean) {
+	try {
+		const queryText = 'UPDATE bingo_schema."Rooms" SET status=$2 WHERE room_id=$1';
+		const queryParams = [room_id, status];
+		await query(queryText, queryParams);
+		console.log('Marked cell inserted successfully!');
+	} catch (error) {
+		console.error('Error inserting room:', error);
+		throw error;
 	}
 }
 
@@ -674,5 +697,7 @@ export {
 	insertMarkedNumber,
 	deleteMarkedNumber,
 	getMarkedCells,
-	deleteAllMarkedNumber
+	deleteAllMarkedNumber,
+	RoomNameOrHostExist,
+	updateRoomStatus
 }

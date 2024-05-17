@@ -1,23 +1,21 @@
 const roomNameInput = document.getElementById('roomNameInput');
 const createRoomBtn = document.getElementById('createRoomBtn');
 
-document.getElementById('createRoomBtn').addEventListener('click', function () {
+document.getElementById('createRoomBtn').onclick = () => {
     const roomName = roomNameInput.value;
     if (roomName) {
-        const usernames = Array.from(document.querySelectorAll('#roomsList tr td:nth-child(2)'))
-                                .map(td => td.textContent.trim());
-        if (usernames.includes(user_name)) {
-            window.alert('You have already created a room');
-            return;
-        }
         socket.emit('create room', { roomName: roomName, user: user });
-        socket.on('update room', (room) => {
-            console.log('Room created:', room);
+        
+        socket.on('update room', async (room) => {
+            if (room.error) return window.alert(room.error)
             window.location.href = `/waiting/${room.roomId}`;
         });
     }
-});
-function addEntry(host,roomName,roomId,roomsList) {
+};
+
+
+
+function addEntry(host,roomName,roomId,roomStatus, roomsList) {
     const row = document.createElement('tr');
     row.setAttribute('room', roomId);
     
@@ -26,21 +24,23 @@ function addEntry(host,roomName,roomId,roomsList) {
     
     const hostCell = document.createElement('td');
     hostCell.textContent = host;
-    
+
     const actionCell = document.createElement('td');
-    const joinButton = document.createElement('a');
-    joinButton.textContent = 'Join';
+    
+    const joinButton = document.createElement('div');
+    joinButton.id = `status-${roomId}`
     joinButton.classList.add('join-btn'); // Add a class for styling if needed
     joinButton.setAttribute('room-id', roomId); // Store room ID in data attribute
     
-    joinButton.addEventListener('click', function() {
-        const roomId = joinButton.getAttribute('room-id');
-        // Implement join room functionality
-        joinRoom(roomId,host);
-    });
+    if (!roomStatus) {
+        joinButton.textContent = 'Join';
+        joinButton.onclick = () => joinRoom(roomId);
+    } else {
+        joinButton.textContent = "Playing";
+    }
     
-    actionCell.appendChild(joinButton);
-    
+    actionCell.appendChild(joinButton);    
+
     row.appendChild(roomNameCell);
     row.appendChild(hostCell);
     row.appendChild(actionCell);
@@ -50,8 +50,21 @@ function addEntry(host,roomName,roomId,roomsList) {
     
 }
 socket.on('update room', (room) => {
+    
     const roomsList = document.getElementById('roomsList');
-    addEntry(room.user,room.roomName,room.roomId,roomsList);
+    addEntry(room.user,room.roomName,room.roomId, room.status,roomsList);
+});
+
+socket.on('update status game', (data) => {
+    const joinButton = document.getElementById(`status-${data.roomId}`);
+    
+    if (data.status) {
+        joinButton.innerText = "Playing";
+        joinButton.onclick = null;
+    } else {
+        joinButton.innerText = "Join"
+        joinButton.onclick = () => joinRoom(data.roomId);
+    }
 });
 
 socket.on('room deleted', (data) => {
@@ -66,9 +79,9 @@ async function fetchRooms() {
         const rooms = await response.json();
         const roomsList = document.getElementById('roomsList');
         roomsList.innerHTML = ''; // Clear existing entries
-
+        
         rooms.forEach(room => {
-            addEntry(room.host,room.room_name,room.room_id,roomsList);
+            addEntry(room.host,room.room_name,room.room_id, room.status, roomsList);
         });
     } catch (error) {
         console.error('Failed to fetch rooms', error);
@@ -114,4 +127,3 @@ async function joinRoom(roomId) {
 
 
 fetchRooms();
-
