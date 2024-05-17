@@ -1,5 +1,5 @@
 import express, {Request, Response, NextFunction} from 'express'
-import {loginRequest} from '../middleware/auth'
+import {loginRequest,isUserExist} from '../middleware/auth'
 import {createTable, insertUser, getUsers, getRooms} from '../database/index'
 import * as db from '../database/index'
 import bcrypt from 'bcrypt'
@@ -63,7 +63,7 @@ router.get('/available_rooms', async (req: Request, res: Response) => {
 	}
 })
 
-router.get('/waiting/:roomId', async (req, res) => {
+router.get('/waiting/:roomId',isUserExist, async (req, res) => {
 	const roomId = req.params.roomId
 
 	try {
