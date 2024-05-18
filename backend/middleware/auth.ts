@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express'
 import session from 'express-session'
-import { getUserData, getUsers,getUserIdByUsername, getPlayerInRoom,getRoomDetail } from '../database';
+import { getUserData, getUsers,getUserIdByUsername, getPlayerInRoom,getRoomDetail,ifPlayerInAnyRoom } from '../database';
 import bcrypt from "bcrypt";
 
 declare module 'express-session' {
@@ -58,7 +58,7 @@ const loginRequest = async (req: Request, res: Response) => {
 	if (await authenticate(username, password)) {
 		const userId = parseInt(await getUserIdByUsername(username))
 		req.session.user = { sessionID , username, userId }
-		return res.redirect('/')
+		return res.redirect('/login')
 	} else {
 		return res.render('login', {errorMessage: 'Invalid username or password', session: req.session})
 	}
@@ -105,5 +105,37 @@ const isUserExistAndGameStarted = async (req: Request, res: Response, next: Next
     }
 };
 
+const isPlayerInAnyRoom = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.session.user) {
+            return next();
+        }
 
-export { sessionData, requiredLoginAllSites, loginRequest ,isUserExist,isUserExistAndGameStarted}
+        if (!['/login'].includes(req.path)) {
+            return next();
+        }
+
+        const userId = req.session.user.userId;
+        const players = await ifPlayerInAnyRoom(userId);
+
+        if (players) {
+            const rooms = await Promise.all(players.map(async (room: any) => {
+                const roomStatus = await getRoomDetail(room.room_id);
+                const status = roomStatus.status;
+                return { room_id: room.room_id, status: status };
+            }));
+
+            return res.render('redirect', { rooms });
+        }
+
+        next();
+    } catch (error) {
+        console.error('Error in isPlayerInAnyRoom middleware:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+export default isPlayerInAnyRoom;
+
+
+export { sessionData, requiredLoginAllSites, loginRequest ,isUserExist,isUserExistAndGameStarted,isPlayerInAnyRoom}
