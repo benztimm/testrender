@@ -6,7 +6,7 @@ import homeRouter from './routers'
 import path from 'path'
 import {Server} from 'socket.io'
 import {createServer} from 'node:http'
-import {sessionData, requiredLoginAllSites, loginRequest} from './middleware/auth'
+import {sessionData, requiredLoginAllSites, loginRequest,isPlayerInAnyRoom} from './middleware/auth'
 import {logger} from './middleware/logger'
 import * as db from './database/index'
 
@@ -22,7 +22,8 @@ app.use(logger)
 app.use(express.urlencoded({extended: true}))
 app.use(express.static(path.join(__dirname, '../frontend')))
 app.set('views', path.join(__dirname, 'views')).set('view engine', 'ejs')
-app.use(requiredLoginAllSites)
+app.use(requiredLoginAllSites,isPlayerInAnyRoom)
+app
 app.use(express.json())
 
 io.on('connection', (socket) => {
