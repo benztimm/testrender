@@ -71,13 +71,13 @@ io.on('connection', (socket) => {
 
 		await db.removePlayerFromRoom(userId, roomId)
 		await db.deletePlayerStatus(userId, roomId)
-		io.to(roomId).emit('player exited', {userId: userId}) // Notify others in the room
+		io.to(String(roomId)).emit('player exited', {userId: userId}) // Notify others in the room
 		// Update database or manage internal state as necessary
 	})
 	socket.on('kicking player', async (data) => {
 		const {roomId, userId} = data
 		await db.deletePlayerStatus(userId, roomId)
-		io.to(roomId).emit('player kicked', {userId: userId}) // Notify others in the room
+		io.to(String(roomId)).emit('player kicked', {userId: userId}) // Notify others in the room
 		// Update database or manage internal state as necessary
 	})
 
