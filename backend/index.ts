@@ -140,22 +140,24 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('user marked number', async (data) => {
+		const roomId = String(data.roomId)
 		if (data.isMarked) {
 			await db.deleteMarkedNumber(data.playerId, data.roomId, data.cell_id)
 		} else {
 			await db.insertMarkedNumber(data.playerId, data.roomId, data.cell_id)
 		}
-		io.to(data.roomId).emit('update card marked', {roomId: data.roomId, playerId: data.playerId, row: data.row, col: data.col, number: data.number, isMarked: data.isMarked})
+		io.to(roomId).emit('update card marked', {roomId: data.roomId, playerId: data.playerId, row: data.row, col: data.col, number: data.number, isMarked: data.isMarked})
 	})
 	socket.on('check won', async (data) => {
+		const roomId = String(data.room_id)
 		const playerCard = await db.getCardByPlayer(data.user_id, data.room_id)
 		const drawn_numbers = await db.getDrawnNumber(data.room_id)
 		const calledNumber = drawn_numbers.map((result) => result.drawn_number)
 		const win = card.checkForWin(playerCard, calledNumber)
 		if (win) {
-			io.to(data.room_id).emit('player won', {roomId: data.room_id, playerId: data.user_id, playerUsername: data.user_name})
+			io.to(roomId).emit('player won', {roomId: data.room_id, playerId: data.user_id, playerUsername: data.user_name})
 		} else {
-			io.to(data.room_id).emit('player not won', {roomId: data.room_id, playerId: data.user_id})
+			io.to(roomId).emit('player not won', {roomId: data.room_id, playerId: data.user_id})
 		}
 	})
 	socket.on('game ended', async (data) => {
