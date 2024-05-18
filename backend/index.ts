@@ -146,7 +146,7 @@ io.on('connection', (socket) => {
 		} else {
 			await db.insertMarkedNumber(data.playerId, data.roomId, data.cell_id)
 		}
-		io.to(roomId).emit('update card marked', {roomId: data.roomId, playerId: data.playerId, row: data.row, col: data.col, number: data.number, isMarked: data.isMarked})
+		io.to(roomId).emit('update card marked', {roomId: data.roomId, playerId: data.playerId, row: data.row, col: data.col, isMarked: data.isMarked})
 	})
 	socket.on('check won', async (data) => {
 		const roomId = String(data.room_id)
