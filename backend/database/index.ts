@@ -222,6 +222,16 @@ async function ifPlayerInRoom(user_id: Number, room_id: Number) {
 		throw error
 	}
 }
+async function ifPlayerInAnyRoom(user_id: Number|undefined) {
+	try {
+		if (user_id === undefined) return []
+		const user = await query(`SELECT * FROM bingo_schema.room_player_table WHERE user_id = $1`, [user_id])
+		return user.rows
+	} catch (error) {
+		console.error('Error inserting user:', error)
+		throw error
+	}
+}
 
 /**
  * Inserts the generated card into the database
@@ -699,5 +709,6 @@ export {
 	getMarkedCells,
 	deleteAllMarkedNumber,
 	RoomNameOrHostExist,
-	updateRoomStatus
+	updateRoomStatus,
+	ifPlayerInAnyRoom
 }
