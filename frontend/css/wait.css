@@ -101,6 +101,9 @@ h1 {
 	font-size: 3rem;
 	margin-bottom: 2rem;
 }
+h2{
+	text-align: center;
+}
 p {
 	font-size: 20px;
 }
