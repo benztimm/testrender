@@ -113,14 +113,14 @@ function callNumber() {
 }
 
 function markNumber(cell) {
-	const [playerId, row, col, number] = cell.id.split('-')
+	const [playerId, row, col] = cell.id.split('-')
 	const cell_id = cell.id
 	const isMarked = cell.classList.contains('marked')
-	socket.emit('user marked number', {roomId, playerId, row, col, number, isMarked, cell_id})
+	socket.emit('user marked number', {roomId, playerId, row, col, isMarked, cell_id})
 }
 
 socket.on('update card marked', function (data) {
-	const userCard = document.getElementById(`${data.playerId}-${data.row}-${data.col}-${data.number}`)
+	const userCard = document.getElementById(`${data.playerId}-${data.row}-${data.col}`)
 	userCard.classList.toggle('marked')
 })
 
