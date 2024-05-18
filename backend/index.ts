@@ -126,7 +126,6 @@ io.on('connection', (socket) => {
 			console.log('Room not found')
 		}
 		if (gameRooms[roomId]) {
-			console.log('Room found')
             gameRooms[roomId].totalNumber = card.generateDistinctNumbers(75);
 
             gameRooms[roomId].intervalId = setInterval(async () => {
