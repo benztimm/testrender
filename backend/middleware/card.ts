@@ -70,8 +70,18 @@ function checkForWin(card: Card, calledNumbers: number[]): boolean {
     return false;
 }
 
+const generateDistinctNumbers = (count: number): number[] => {
+    const numbers = Array.from({ length: count }, (_, i) => i + 1);
+    for (let i = numbers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+    }
+    return numbers;
+};
+
 export {
     generateCard,
-    checkForWin
+    checkForWin,
+    generateDistinctNumbers
     
 };
