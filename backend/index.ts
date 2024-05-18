@@ -26,6 +26,12 @@ app.use(requiredLoginAllSites,isPlayerInAnyRoom)
 app
 app.use(express.json())
 
+interface GameRoom {
+    totalNumber: number[];
+    intervalId: NodeJS.Timeout | null;
+}
+const gameRooms: { [key: string]: GameRoom } = {};
+
 io.on('connection', (socket) => {
 	socket.on('join room', (roomId) => {
 		socket.join(roomId)
@@ -99,6 +105,10 @@ io.on('connection', (socket) => {
 
 	socket.on('starting game', async (data) => {
 		await db.updateRoomStatus(data.roomId, true)
+		const room_id = String(data.roomId)
+		if (!gameRooms[room_id]) {
+            gameRooms[room_id] = { totalNumber: [], intervalId: null };
+        }
 		io.to('lobby').emit('update status game', {
 			roomId: data.roomId, status: true
 		})
@@ -108,8 +118,25 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('generate random number', async (data) => {
-		await db.insertDrawnNumber(data.roomId, data.number)
-		io.to(data.roomId).emit('number generated', {number: data.number})
+		const roomId = String(data.roomId);
+		if(!gameRooms[roomId]) {
+			console.log('Room not found')
+		}
+		if (gameRooms[roomId]) {
+			console.log('Room found')
+            gameRooms[roomId].totalNumber = card.generateDistinctNumbers(75);
+
+            gameRooms[roomId].intervalId = setInterval(async () => {
+                const nextNumber = gameRooms[roomId].totalNumber.pop();
+                if (nextNumber !== undefined) {
+					await db.insertDrawnNumber(data.roomId, nextNumber)
+                    io.to(roomId).emit('number generated', {number: nextNumber})
+                } else {
+                    clearInterval(gameRooms[roomId].intervalId!);
+                    gameRooms[roomId].intervalId = null;
+                }
+            }, 1000); 
+        }		
 	})
 
 	socket.on('user marked number', async (data) => {
@@ -132,6 +159,11 @@ io.on('connection', (socket) => {
 		}
 	})
 	socket.on('game ended', async (data) => {
+		const roomId = String(data.roomId);
+		if (gameRooms[roomId] && gameRooms[roomId].intervalId) {
+            clearInterval(gameRooms[roomId].intervalId!);
+            gameRooms[roomId].intervalId = null;
+        }
 		await db.deleteOldCards(data.roomId)
 		await db.deleteStartTime(data.roomId)
 		await db.deleteDrawnNumber(data.roomId)
