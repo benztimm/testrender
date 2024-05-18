@@ -256,6 +256,30 @@ router.post('/api/draw_number/:roomId', async (req: Request, res: Response) => {
 		}
 	}
 });
+
+router.get('/check_user_and_game/:roomId', async (req, res) => {
+    try {
+        const roomId = parseInt(req.params.roomId);
+        const userId = req.session.user?.userId;
+
+        if (!userId) {
+            return res.status(200).json({ isUserInRoom: false, isGameStarted: false });
+        }
+
+        const [players, roomDetail] = await Promise.all([
+            db.getPlayerInRoom(roomId),
+            db.getRoomDetail(roomId),
+        ]);
+
+        const isUserInRoom = players.some((player) => player.user_id === userId);
+        const isGameStarted = roomDetail?.status;
+
+        res.status(200).json({ isUserInRoom, isGameStarted });
+    } catch (error) {
+        console.error('Error in checkUserInRoomAndGameStarted:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 export default router
 /**
  * if (allPlayers.length >= 4) {
