@@ -243,7 +243,18 @@ router.post('/host_exit/:roomId', async (req: Request, res: Response) => {
 		res.status(400).json({message: 'Invalid user or room ID'})
 	}
 })
-
+router.post('/api/draw_number/:roomId', async (req: Request, res: Response) => {
+	const {roomId} = req.body
+	if (roomId) {
+        const drawnNumbers = await db.getDrawnNumber(parseInt(roomId));
+		const draw_number_without_zero = drawnNumbers.filter((result) => result.drawn_number !== 0)
+		if (draw_number_without_zero.length<=0){
+			return res.status(400).json({message: 'No number drawn yet'})
+		}else{
+			return res.status(200).json({message: 'Number started drawing'})
+		}
+	}
+});
 export default router
 /**
  * if (allPlayers.length >= 4) {
