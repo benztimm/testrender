@@ -17,6 +17,7 @@
 		<%- include('partials/menu') %>
 		<div class="flip-form" id="FlipForm">
 			<div class="flip-form-inner">
+
 				<div class="flip-form-front">
 					<form action="/register" method="POST">
 						<div class="header">
@@ -42,18 +43,44 @@
 							<input type="submit" value="Register" />
 						</div>
 						<div class="login-link">
-							<p class="paraText">Already have an account? <a href="/login">Log in</a></p>
+							<p class="paraText">Already have an account? <a href="#" onclick="flipForm()">Log in</a></p>
 						</div>
 					</form>
 				</div>
+
+				<div class="flip-form-back">
+					<form action="/login" method="POST">
+						<div class="header">
+							<h2>Login</h2>
+						</div>
+						<div class="inputBox">
+							<input class="inputText" type="text" name="username" required />
+							<label><i class="fa-solid fa-user icon"></i>Username</label>
+						</div>
+						<div class="inputBox">
+							<input class="inputText" type="password" name="password" required />
+							<label><i class="fa-solid fa-lock icon"></i>Password</label>
+						</div>
+						<div class="inputBox">
+							<a href="#">Forgot password</a>
+						</div>
+						<div class="paraText">
+							<input type="submit" value="Login" />
+						</div>
+						<div class="signup-link">
+							<p class="paraText">Don't have an account? <a href="#" onclick="flipForm()">Sign up</a></p>
+						</div>
+					</form>
+				</div>
+
 			</div>
 		</div>
 
-		<!-- <script>
+		<script>
 			function flipForm() {
 				var form = document.getElementById('FlipForm')
 				form.classList.toggle('flipped')
 			}
-		</script> -->
+		</script>
 	</body>
 </html>

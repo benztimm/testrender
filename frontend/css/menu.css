@@ -3,9 +3,50 @@ body{
     margin: 0;
     padding: 0;
     font-family: sans-serif;
+    background-color: #45615d;
+    color: white;
    
 }
- 
+
+h1, p {
+    text-align: center;
+    color: white;
+}
+
+.room-list {
+    margin: 20px 10%;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.room-list > a {
+    background-color: #313131;
+    list-style-type:none;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 5px;
+    color: #fff;
+}
+
+.room-list > a > span.room-header {
+    float:left ;
+}
+
+.room-list > a > span:nth-child(2){
+    float: right;
+}
+
+.room-link {
+    text-decoration: none;
+    color: #fff;
+}
+
+.room-list > a:hover {
+    background: #0056b3;
+}
+
+
 /* menu cubes */
 .menu-cubes{
 
@@ -174,37 +215,7 @@ h1{
 p{
     font-size: 20px;
 }
-/* .chat-btn{
-    position: fixed;
-    right: 50;
-    width: 50px;
-    bottom: 50px;
-    background: dodgerblue;
-    color: white;
-    height: 50px;
-    border-radius:50%;
-    opacity: 0.8;
-    transition: opacity 0.3s;
-    box-shadow: 0 5px 5px rgba(0,0,0,0.4);
-}
 
-.chat-btn:hover, .submit:hover, #emoji-btn:hover {
-    opacity: 1;
-
-} */
-
-.bn{
-    border:none;
-    outline: none;
-    cursor: pointer;
-}
-
-
-/* .chat-area {
-    height: 80%;
-    overflow-y: auto;
-    overflow-x: hidden;
-} */
 
 .income-msg{
     display: flex;
@@ -254,14 +265,14 @@ footer {
 .chat-container {
     position: fixed;
     display: block;
-    bottom: 40px;
+    bottom: -100%;
     left: 0;
     max-width: 700px;
     width: 300px;
     height: 200px;
     background: linear-gradient(to top, rgb(255, 187, 0), rgb(255, 119, 0));
     border-radius: 10px;
-    animation: slide ease 0.5s;
+    transition: all 0.5s ease-in;
 }
 
 .chat-area {
@@ -289,15 +300,6 @@ footer {
     border-width: 1px;
 }
 
-.inactive {
-    display: none;
-}
-
-@keyframes slide {
-    from {
-        bottom: -200px;
-    }
-    to {
-        bottom: 40px;
-    }
+.show {
+    bottom: 40px;   
 }

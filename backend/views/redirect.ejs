@@ -4,54 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rooms</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        h1 {
-            text-align: center;
-            color: #444;
-        }
-        .room-list {
-            list-style: none;
-            padding: 0;
-        }
-        .room-item {
-            background: #fff;
-            border: 1px solid #ddd;
-            margin: 10px 0;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .room-header {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-        .room-link {
-            display: inline-block;
-            padding: 10px 15px;
-            background: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 3px;
-            transition: background 0.3s;
-        }
-        .room-link:hover {
-            background: #0056b3;
-        }
-        p {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Arial, sans-serif;
-            color: #333;
-          }
-    </style>
     <link rel="stylesheet" href="/css/menu.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
@@ -61,20 +13,26 @@
     <p>Redirecting to lobby in&nbsp;<span id="countdown">9</span>&nbsp; seconds...</p>
     <h1>Your Previous Joined Rooms</h1>
     <ul class="room-list">
-        <li class="room-item">
-            <div class="room-header">Lobby</div>
-            <a class="room-link" href="/lobby">Go to Lobby</a>
-        </li>
+        
+        <a class="room-item" href="/lobby">
+            <span class="room-header">Lobby</span>
+            <span>Go to Lobby</span>
+        </a>
+
         <% rooms.forEach(room => { %>
-            <li class="room-item">
-                <% if (room.status === false) { %>
-                    <div class="room-header">Waiting Room</div>
-                    <a class="room-link" href="/waiting/<%= room.room_id %>">Go to Waiting Room <%= room.room_name %></a>
-                <% } else { %>
-                    <div class="room-header">Game Room</div>
-                    <a class="room-link" href="/game/<%= room.room_id %>">Go to Game Room <%= room.room_name %></a>
-                <% } %>
-            </li>
+
+            <% if (room.status === false) { %>
+                <a class="room-item" href="/waiting/<%= room.room_id %>">
+                    <span class="room-header">Waiting Room</span>
+                    <span>Go to Waiting Room "<%= room.room_name %>"</span>
+                </a>
+            <% } else { %>
+                <a class="room-item" href="/game/<%= room.room_id %>">
+                    <span class="room-header">Game Room</span>
+                    <span>>Go to Game Room "<%= room.room_name %>"</span>
+                </a>
+            <% } %>
+            
         <% }) %>
     </ul>
     <%- include('partials/chat', { session: session, roomId: 'lobby' }) %>

@@ -12,7 +12,7 @@
 </head>
 <body>
     <%- include('partials/menu') %>
-
+    <h1>Game Rooms</h1>
     <section id="lobby" class="lobby-section">
         <div class="lobbyBox"> 
         <div class="inputBx">
@@ -27,7 +27,6 @@
             </button>
         </div>
         
-        <h3>Game Rooms</h3>
         <table id="roomsTable" class="tb">
             <thead>
                 <tr>
@@ -42,10 +41,11 @@
         </table>
         </div>
     </section>
-    <%- include('partials/chat', { session: session, roomId: 'lobby' }) %>
+
     <script>
         const user_name = '<%= session.user.username %>';
     </script>
+    <%- include('partials/chat', { session: session, roomId: 'lobby' }) %>
     <script src="/script/lobby.js"></script>
 </body>
 </html>

@@ -1,10 +1,12 @@
+
 body {
 	font-family: Arial, sans-serif;
 	text-align: center;
+	background-color: #45615d;
 }
-h1 {
+/* h1 {
 	color: #333;
-}
+} */
 
 #timer {
 	font-family: 'Courier New', monospace;
@@ -15,6 +17,7 @@ h1 {
 	padding: 10px;
 	background-color: #f0f0f0;
 	border: 1px solid #ccc;
+	color: black;
 	border-radius: 5px;
 	display: inline-block;
 	width: auto;
@@ -33,6 +36,7 @@ h1 {
 	height: 40px;
 	border-radius: 50%;
 	background-color: #ccc;
+	color: black;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -131,10 +135,13 @@ section {
 	justify-content: space-between;
 }
 .bingo-cell {
-	width: 30px;
-	height: 30px;
+	color: white;
+	width: 35px;
+	height: 35px;
 	border: 1px solid #333;
 	display: flex;
+	margin: 0;
+	/* padding: 5px; */
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
@@ -160,7 +167,7 @@ section {
 }
 
 .startButton {
-	background-color: #0c0d0c;
+	background-color: rgb(201, 131, 26);
 	border: none;
 	color: white;
 	padding: 20px 40px;

@@ -17,6 +17,7 @@
 		<%- include('partials/menu') %>
 		<div class="flip-form" id="FlipForm">
 			<div class="flip-form-inner">
+				
 				<div class="flip-form-front">
 					<form action="/login" method="POST">
 						<div class="header">
@@ -37,10 +38,41 @@
 							<input type="submit" value="Login" />
 						</div>
 						<div class="signup-link">
-							<p class="paraText">Don't have an account? <a href="/register">Sign up</a></p> <!-- onclick="flipForm()" -->
+							<p class="paraText">Don't have an account? <a href="#" onclick="flipForm()">Sign up</a></p> <!-- onclick="flipForm()" -->
 						</div>
 					</form>
 				</div>
+				
+				<div class="flip-form-back">
+					<form action="/register" method="POST">
+						<div class="header">
+							<h2>Sign up</h2>
+						</div>
+						<div class="inputBox">
+							<input type="text" name="username" required />
+							<label><i class="fa-solid fa-user"></i>Username</label>
+						</div>
+						<div class="inputBox">
+							<input type="text" name="email" required />
+							<label><i class="fa-solid fa-user"></i>Email</label>
+						</div>
+						<div class="inputBox">
+							<input type="password" name="password" required />
+							<label><i class="fa-solid fa-user"></i>Password</label>
+						</div>
+						<div class="inputBox">
+							<input type="password" name="confirmPassword" required />
+							<label><i class="fa-solid fa-lock"></i>Confirm Password</label>
+						</div>
+						<div class="paraText">
+							<input type="submit" value="Register" />
+						</div>
+						<div class="login-link">
+							<p class="paraText">Already have an account? <a href="#" onclick="flipForm()">Log in</a></p>
+						</div>
+					</form>
+				</div>
+			
 			</div>
 		</div>
 
