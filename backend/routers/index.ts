@@ -15,11 +15,11 @@ router.get('/lobby', (req, res) => {
 })
 
 router.get('/login', (req: Request, res: Response) => {
-	res.render('login', {session: req.session})
+	res.render('login', {session: req.session,errorMessage: ''})
 })
 
 router.get('/register', (req: Request, res: Response) => {
-	res.render('register', {session: req.session})
+	res.render('register', {session: req.session,errorMessage: ''})
 })
 
 router.post('/register', async (req, res) => {
@@ -32,7 +32,7 @@ router.post('/register', async (req, res) => {
 
 	// - Store all of them to DB
 	await insertUser(username, hash, email)
-	res.render('login', {session: req.session})
+	res.render('login', {session: req.session,errorMessage: ''})
 })
 
 router.post('/login', (req: Request, res: Response) => {
