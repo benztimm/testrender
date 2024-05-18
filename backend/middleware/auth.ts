@@ -118,7 +118,7 @@ const isPlayerInAnyRoom = async (req: Request, res: Response, next: NextFunction
         const userId = req.session.user.userId;
         const players = await ifPlayerInAnyRoom(userId);
 
-        if (players) {
+        if (players.length > 0) {
             const rooms = await Promise.all(players.map(async (room: any) => {
                 const roomStatus = await getRoomDetail(room.room_id);
                 const status = roomStatus.status;
@@ -128,7 +128,7 @@ const isPlayerInAnyRoom = async (req: Request, res: Response, next: NextFunction
             return res.render('redirect', { rooms:rooms, session: req.session});
         }
 
-        next();
+        return res.render('index', {session: req.session});
     } catch (error) {
         console.error('Error in isPlayerInAnyRoom middleware:', error);
         res.status(500).send('Internal Server Error');
