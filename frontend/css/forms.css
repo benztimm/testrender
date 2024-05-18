@@ -37,7 +37,7 @@ body{
 }
 
 .flip-form-front{
-    background: linear-gradient(180deg, #232c33 40%, #153a56);
+    background: linear-gradient(180deg, #232c33 40%, #45615d);
     color: #2980b9;
     border-radius: 10px;
     box-shadow: 0 0 3.2px #fff,0 0 3.2px #fff, 0 0 20.8px #2980b9, inset 0 0 20.8px #2980b9;
@@ -45,7 +45,7 @@ body{
 }
 
 .flip-form-back{
-    background: linear-gradient(180deg, #232c33 40%, #153a56);
+    background: linear-gradient(180deg, #232c33 40%, #45615d);
     color: #2980b9;
     border-radius: 10px;
     box-shadow: 0 0 3.2px #fff,0 0 3.2px #fff, 0 0 20.8px #2980b9, inset 0 0 20.8px #2980b9;

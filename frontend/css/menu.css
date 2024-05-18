@@ -255,8 +255,11 @@ footer {
     width: 100%;
     background-color: #000;
     color: aliceblue;
-    padding: 10px;
+    padding: auto;
     text-align: center;
+    position: fixed;
+    bottom: 0;
+    height: auto;;
     
 }
 
