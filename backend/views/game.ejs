@@ -44,7 +44,7 @@
 								<div class="bingo-row">
 									<% for (let col=0; col < player.card_data[row].length; col++) { %>
 										<% 
-										const cellId = player.user_id + '-' + col + '-' + row + '-' + player.card_data[col][row];
+										const cellId = player.user_id + '-' + col + '-' + row;
 										const isMidCell = row == 2 && col == 2;  // Check if it's the special cell
 										const cellClass = gameInfo.markedCells.includes(cellId) || isMidCell ? "bingo-cell marked" : "bingo-cell";
 										%>
@@ -66,11 +66,11 @@
 									<div class="bingo-row">
 										<% for (let col=0; col < player.card_data[row].length; col++) { %>
 											<% 
-											const cellId = player.user_id + '-' + col + '-' + row + '-' + player.card_data[col][row];
+											const cellId = player.user_id + '-' + col + '-' + row;
 											const cellClass = gameInfo.markedCells.includes(cellId) || (row == 2 && col == 2) ? "bingo-cell marked" : "bingo-cell";
 											%>
 											<div class="<%= cellClass %>"
-												id="<%= player.user_id + '-' + col + '-' + row + '-' + player.card_data[col][row] %>">
+												id="<%= player.user_id + '-' + col + '-' + row %>">
 											</div>
 											<% } %>
 									</div>
