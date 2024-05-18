@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooms</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+        }
+        .room-list {
+            list-style: none;
+            padding: 0;
+        }
+        .room-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .room-header {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .room-link {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 3px;
+            transition: background 0.3s;
+        }
+        .room-link:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rooms</h1>
+    <ul class="room-list">
+        <li class="room-item">
+            <div class="room-header">Lobby</div>
+            <a class="room-link" href="/lobby">Go to Lobby</a>
+        </li>
+        <% rooms.forEach(room => { %>
+            <li class="room-item">
+                <% if (room.status === false) { %>
+                    <div class="room-header">Waiting Room</div>
+                    <a class="room-link" href="/waiting/<%= room.room_id %>">Go to Waiting Room <%= room.room_id %></a>
+                <% } else { %>
+                    <div class="room-header">Game Room</div>
+                    <a class="room-link" href="/game/<%= room.room_id %>">Go to Game Room <%= room.room_id %></a>
+                <% } %>
+            </li>
+        <% }) %>
+    </ul>
+</body>
+</html>
