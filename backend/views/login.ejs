@@ -23,6 +23,11 @@
 						<div class="header">
 							<h2>Login</h2>
 						</div>
+						<% if (errorMessage) { %>
+							<div class="error-message">
+								<p><%= errorMessage %></p>
+							</div>
+						<% } %>
 						<div class="inputBox">
 							<input class="inputText" type="text" name="username" required />
 							<label><i class="fa-solid fa-user icon"></i>Username</label>
