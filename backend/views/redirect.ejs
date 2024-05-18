@@ -44,10 +44,22 @@
         .room-link:hover {
             background: #0056b3;
         }
+        p {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            color: #333;
+          }
     </style>
+    <link rel="stylesheet" href="/css/menu.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
 </head>
 <body>
-    <h1>Rooms</h1>
+    <%- include('partials/menu') %>
+    <p>Redirecting to lobby in&nbsp;<span id="countdown">9</span>&nbsp; seconds...</p>
+    <h1>Your Previous Joined Rooms</h1>
     <ul class="room-list">
         <li class="room-item">
             <div class="room-header">Lobby</div>
@@ -57,13 +69,28 @@
             <li class="room-item">
                 <% if (room.status === false) { %>
                     <div class="room-header">Waiting Room</div>
-                    <a class="room-link" href="/waiting/<%= room.room_id %>">Go to Waiting Room <%= room.room_id %></a>
+                    <a class="room-link" href="/waiting/<%= room.room_id %>">Go to Waiting Room <%= room.room_name %></a>
                 <% } else { %>
                     <div class="room-header">Game Room</div>
-                    <a class="room-link" href="/game/<%= room.room_id %>">Go to Game Room <%= room.room_id %></a>
+                    <a class="room-link" href="/game/<%= room.room_id %>">Go to Game Room <%= room.room_name %></a>
                 <% } %>
             </li>
         <% }) %>
     </ul>
+    <%- include('partials/chat', { session: session, roomId: 'lobby' }) %>
+
 </body>
 </html>
+<script>
+    let countdown = 9;
+    function updateCountdown() {
+      document.getElementById('countdown').innerText = countdown;
+      countdown--;
+      if (countdown < 0) {
+        window.location.href = '/lobby';
+      } else {
+        setTimeout(updateCountdown, 1000);
+      }
+    }
+    window.onload = updateCountdown;
+  </script>
