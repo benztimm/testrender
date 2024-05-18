@@ -41,23 +41,7 @@ socket.on('number generated', function (data) {
 	document.getElementById('boss').innerText = data.number
 })
 
-function callNumber() {
-	setInterval(function () {
-		// console.log(`host Id = ${hostId}, user id = ${userId}`)
-		if (userId == hostId) {
-			const number = generateRandomNumber()
-			if (number == null) {
-				return
-			}
-			socket.emit('generate random number', {
-				roomId: roomId,
-				userId: userId,
-				session: userId,
-				number: number,
-			})
-		}
-	}, 1000)
-}
+
 
 function startSynchronizedTimer(startTime, maxDuration, display) {
 	const start = new Date(startTime).getTime() // Get start time in milliseconds
@@ -88,13 +72,44 @@ function startSynchronizedTimer(startTime, maxDuration, display) {
 	}, 1000)
 }
 
-window.onload = function () {
+window.onload = async function () {
 	const maxGameTime = 10 // Maximum game time in minutes
 	var display = document.querySelector('#timer')
 	startSynchronizedTimer(startTime, maxGameTime, display)
 	if (userId == hostId) {
-		callNumber() // Ensure this function is defined
+		const response = await fetch(`/api/draw_number/${roomId}`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				roomId: parseInt(roomId),
+			}),
+		})
+		if (!response.ok) {
+			socket.emit('generate random number', {
+				roomId: roomId,
+			})
+		}
 	}
+}
+
+function callNumber() {
+	setInterval(function () {
+		// console.log(`host Id = ${hostId}, user id = ${userId}`)
+		if (userId == hostId) {
+			const number = generateRandomNumber()
+			if (number == null) {
+				return
+			}
+			socket.emit('generate random number', {
+				roomId: roomId,
+				userId: userId,
+				session: userId,
+				number: number,
+			})
+		}
+	}, 1000)
 }
 
 function markNumber(cell) {
