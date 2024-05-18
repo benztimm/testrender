@@ -160,7 +160,8 @@ router.get('/game/:roomId',isUserExistAndGameStarted, async (req, res) => {
 				user_id: player.user_id,
 				username: player.username,
 				card_id: player.card_id,
-				card_data: player.card_data,
+				card_data: player.user_id==req.session.user?.userId?player.card_data:player.card_data.map(()=>[0,0,0,0,0])
+	
 			})),
 			start_time: startTime,
 			drawn_number: drawnNumber
