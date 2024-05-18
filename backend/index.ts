@@ -47,7 +47,9 @@ io.on('connection', (socket) => {
 
 	socket.on('create room', async (data) => {
 		const isRoomOrHost = await db.RoomNameOrHostExist(data.roomName, data.user)
-		if (isRoomOrHost.length > 0) return io.to('lobby').emit('update room', {error: 'You have already created a room or room exist!'})
+		if (isRoomOrHost.length > 0){
+			return io.to('lobby').emit('failed create room', {error: 'You have already created a room or room exist!', user: data.user})
+		}
 		// ===================================================>>>>>
 		await db.createRoom(data.roomName, data.user, false)
 		const player_id = await db.getUserIdByUsername(data.user)
@@ -57,6 +59,7 @@ io.on('connection', (socket) => {
 
 		io.to('lobby').emit('update room', {roomName: data.roomName, user: data.user, roomId: room_id, status:false}) // Respond back to the client
 	})
+
 	socket.on('player ready', async (data) => {
 		const {roomId, userId} = data
 		const playerStatus = await db.getPlayerStatus(userId, roomId)
