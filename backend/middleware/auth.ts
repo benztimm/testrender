@@ -122,10 +122,10 @@ const isPlayerInAnyRoom = async (req: Request, res: Response, next: NextFunction
             const rooms = await Promise.all(players.map(async (room: any) => {
                 const roomStatus = await getRoomDetail(room.room_id);
                 const status = roomStatus.status;
-                return { room_id: room.room_id, status: status };
+                return { room_id: room.room_id, status: status, room_name: roomStatus.room_name};
             }));
 
-            return res.render('redirect', { rooms });
+            return res.render('redirect', { rooms:rooms, session: req.session});
         }
 
         next();
