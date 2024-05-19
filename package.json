@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc",
-    "start": "node ./dist/index.js",
+    "build": "tsc && npm run copy-ejs",
+    "start": "node dist/index.js",
+    "copy-ejs": "copyfiles -u 1 backend/**/*.ejs dist/",
     "dev": "nodemon ./backend/index.ts",
     "dbStart": "brew services start postgresql@14"
   },
@@ -29,6 +30,7 @@
     "@types/express-session": "^1.18.0",
     "@types/node": "^20.11.26",
     "@types/pg": "^8.11.5",
+    "copyfiles": "^2.4.1",
     "nodemon": "^3.1.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.2"
